@@ -240,12 +240,27 @@ function TeamSlide({ section, index }: SlideProps) {
 }
 
 function ProjectsSlide({ section, index }: SlideProps) {
-  const photos = [
-    ["/media/operacion-puerto-2020.avif", "Industria y puerto"],
-    ["/media/operacion-hospital.avif", "Construcción"],
-    ["/media/operacion-evento-2023.avif", "Eventos"],
-    ["/media/operacion-pasarela-sant-celoni.avif", "Infraestructuras"],
+  const projects = [
+    {
+      alt: "Operación industrial de Grúas del Vallès en el puerto de Barcelona.",
+      detail: section.details[0],
+      images: ["/media/operacion-puerto-2020.avif"],
+    },
+    {
+      alt: "Grúa de Grúas del Vallès durante una operación de construcción.",
+      detail: section.details[1],
+      images: ["/media/operacion-hospital.avif"],
+    },
+    {
+      alt: "Operaciones de Grúas del Vallès para eventos e infraestructuras.",
+      detail: section.details[2],
+      images: [
+        "/media/operacion-evento-2023.avif",
+        "/media/operacion-pasarela-sant-celoni.avif",
+      ],
+    },
   ] as const;
+
   return (
     <SlideFrame section={section}>
       <div className="mx-auto flex min-h-[100svh] max-w-[90rem] flex-col px-6 pt-28 pb-24 sm:px-10">
@@ -272,38 +287,41 @@ function ProjectsSlide({ section, index }: SlideProps) {
           </p>
         </div>
         <div
-          className="mt-10 grid flex-1 grid-cols-2 gap-3 lg:grid-cols-4"
+          className="mt-10 grid flex-1 gap-3 lg:min-h-0 lg:grid-cols-[1.15fr_0.85fr_1fr]"
           data-animate
         >
-          {photos.map(([src, label], photoIndex) => (
+          {projects.map(({ alt, detail, images }, projectIndex) => (
             <figure
-              className={`relative overflow-hidden ${photoIndex === 0 ? "col-span-2 lg:col-span-2" : ""}`}
-              key={src}
+              className="relative min-h-64 overflow-hidden bg-[#171719] lg:min-h-0"
+              key={detail.title}
             >
-              <img
-                alt=""
-                className="h-full min-h-44 w-full object-cover"
-                src={src}
-              />
-              <figcaption className="absolute right-0 bottom-0 bg-[#0b0b0c]/90 px-3 py-2 text-xs font-bold tracking-[0.14em] text-white uppercase">
-                {label}
+              <div
+                className={`grid h-full grid-cols-1 gap-px bg-[#0b0b0c] ${images.length === 2 ? "grid-rows-2" : ""}`}
+              >
+                {images.map((src) => (
+                  <img
+                    alt={images.length === 1 ? alt : ""}
+                    className="h-full min-h-0 w-full object-cover"
+                    key={src}
+                    src={src}
+                  />
+                ))}
+              </div>
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#09090a]/95 via-[#09090a]/24 to-transparent" />
+              <figcaption className="absolute right-0 bottom-0 left-0 p-5 sm:p-6">
+                <span className="text-xs font-bold text-[#ff7777]">
+                  0{projectIndex + 1}
+                </span>
+                <h2 className="mt-2 text-lg font-semibold tracking-[-0.03em] text-white">
+                  {detail.title}
+                </h2>
+                <p className="mt-2 max-w-sm text-sm leading-6 text-white/75">
+                  {detail.description}
+                </p>
               </figcaption>
             </figure>
           ))}
         </div>
-        <ol className="mt-4 grid gap-3 sm:grid-cols-3" data-animate>
-          {section.details.map((detail, detailIndex) => (
-            <li className="border-t border-white/25 pt-3" key={detail.title}>
-              <span className="text-xs font-bold text-[#ff7777]">
-                0{detailIndex + 1}
-              </span>
-              <h2 className="mt-2 font-semibold text-white">{detail.title}</h2>
-              <p className="mt-1 text-sm leading-6 text-white/65">
-                {detail.description}
-              </p>
-            </li>
-          ))}
-        </ol>
       </div>
     </SlideFrame>
   );
@@ -332,8 +350,14 @@ function ContactSlide({ section, index }: SlideProps) {
           >
             {section.summary}
           </p>
+          <h2
+            className="mt-10 max-w-lg border-l-2 border-[#ed2828] pl-5 text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl"
+            data-animate
+          >
+            Preparados para la próxima maniobra.
+          </h2>
           <div
-            className="mt-10 grid gap-x-8 gap-y-6 border-t border-white/20 pt-6 sm:grid-cols-2"
+            className="mt-8 grid gap-x-8 gap-y-6 border-t border-white/20 pt-6 sm:grid-cols-2"
             data-animate
           >
             {section.details.map((detail) => (
@@ -355,7 +379,15 @@ function ContactSlide({ section, index }: SlideProps) {
             src="/media/operacion-construccion-2024.avif"
           />
           <figcaption className="absolute right-5 bottom-5 left-5 border-l-2 border-[#ed2828] bg-[#0b0b0c]/90 p-4 text-sm leading-6 text-white/80">
-            Estudio técnico, planificación y respuesta para cada operación.
+            <a
+              className="font-bold text-white hover:text-[#ff7777]"
+              href="tel:+34938497022"
+            >
+              93 849 70 22
+            </a>
+            <p className="mt-2">
+              Estudio técnico, planificación y respuesta para cada operación.
+            </p>
           </figcaption>
         </figure>
       </div>

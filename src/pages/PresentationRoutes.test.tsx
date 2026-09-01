@@ -68,6 +68,22 @@ describe("presentation routes", () => {
     ).toHaveAttribute("href", "/equipo");
   });
 
+  it("integrates each operation description with its project image", () => {
+    render(
+      <MemoryRouter initialEntries={["/casos-de-exito"]}>
+        <AppRoutes />
+      </MemoryRouter>,
+    );
+
+    const portDescription = screen.getByText(
+      /maniobras de 400 y 220 toneladas/i,
+    );
+    expect(portDescription.closest("figcaption")).not.toBeNull();
+    expect(
+      screen.getByRole("heading", { name: /eventos e infraestructuras/i }),
+    ).toBeInTheDocument();
+  });
+
   it("moves between chapters with the keyboard arrows", () => {
     render(
       <MemoryRouter initialEntries={["/flota"]}>
@@ -103,24 +119,27 @@ describe("presentation routes", () => {
     ).toBeInTheDocument();
   });
 
-  it("ends on the closing slide instead of looping to the index", () => {
+  it("combines the contact and closing messages without a further slide", () => {
     render(
       <MemoryRouter initialEntries={["/contacto"]}>
         <AppRoutes />
       </MemoryRouter>,
     );
 
-    fireEvent.keyDown(window, { key: "ArrowRight" });
     expect(
       screen.getByRole("heading", {
         name: /preparados para la próxima maniobra/i,
       }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /93 849 70 22/i })).toHaveAttribute(
+      "href",
+      "tel:+34938497022",
+    );
 
     fireEvent.keyDown(window, { key: "ArrowRight" });
     expect(
       screen.getByRole("heading", {
-        name: /preparados para la próxima maniobra/i,
+        name: /hablemos de su próxima operación/i,
       }),
     ).toBeInTheDocument();
   });

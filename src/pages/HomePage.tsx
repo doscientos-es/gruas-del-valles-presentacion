@@ -3,38 +3,28 @@ import { HubNavigation } from "@/components/navigation/HubNavigation";
 export function HomePage() {
   return (
     <section data-route-content>
-      <div className="relative isolate min-h-[100svh] overflow-hidden bg-[#0b0b0c]">
-        <img
-          alt="Grúa Liebherr LTM 1100 de Grúas del Vallès en operación."
-          className="absolute inset-0 -z-20 h-full w-full object-cover opacity-60"
-          data-route-background
-          fetchPriority="high"
-          height="1280"
-          src="/media/hero-grua-accion-2024-01.avif"
-          width="1728"
+      <div className="relative isolate min-h-[100svh] overflow-hidden bg-[#111114]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_25%,rgba(255,119,119,0.1),transparent_28%),radial-gradient(circle_at_82%_8%,rgba(255,255,255,0.06),transparent_24%),linear-gradient(125deg,#19191b_0%,#0b0b0c_48%,#141416_100%)]"
         />
-        <div className="absolute inset-0 -z-10 bg-linear-to-r from-[#0b0b0c] via-[#0b0b0c]/82 to-[#0b0b0c]/20" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-2/5 bg-linear-to-t from-[#0b0b0c] to-transparent" />
-        <div className="mx-auto grid min-h-svh max-w-360 items-end gap-10 px-6 pt-28 pb-10 sm:px-10 sm:pb-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16 lg:pt-32">
-          <div>
+        <div className="relative mx-auto flex min-h-[100svh] max-w-[100rem] flex-col px-6 pt-28 pb-10 sm:px-10 sm:pb-12 xl:pt-24 xl:pb-0">
+          <div className="relative z-10 max-w-[34rem] xl:max-w-[32rem] xl:pt-[11vh]">
             <h1
-              className="mt-5 max-w-5xl text-5xl font-semibold tracking-[-0.055em] text-white sm:text-6xl lg:text-8xl"
+              className="text-5xl font-semibold tracking-[-0.07em] text-white sm:text-6xl xl:text-7xl"
               data-animate
             >
               Capacidad y seguridad para operaciones críticas.
             </h1>
             <p
-              className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8"
+              className="mt-6 max-w-lg text-base leading-7 text-white/75 sm:text-lg sm:leading-8"
               data-animate
             >
               Más de 55 años de experiencia, medios propios y servicio para
               elevar, transportar y planificar con confianza.
             </p>
 
-            <dl
-              className="mt-10 grid max-w-3xl gap-px bg-white/20 sm:grid-cols-3"
-              data-animate
-            >
+            <dl className="mt-10 border-y border-white/20" data-animate>
               {[
                 ["Desde 1968", "Más de 55 años de experiencia en el sector."],
                 [
@@ -44,44 +34,51 @@ export function HomePage() {
                 ["Gran tonelaje", "Hasta 700 Tn de capacidad máxima."],
               ].map(([value, label]) => (
                 <div
-                  className="bg-[#111114]/80 px-4 py-4 backdrop-blur-sm sm:px-5"
+                  className="grid grid-cols-[7.5rem_1fr] gap-4 border-b border-white/20 py-4 last:border-b-0"
                   key={value}
                 >
                   <dt className="text-sm font-semibold text-white">{value}</dt>
-                  <dd className="mt-2 text-xs leading-5 text-white/65">
-                    {label}
-                  </dd>
+                  <dd className="text-xs leading-5 text-white/65">{label}</dd>
                 </div>
               ))}
             </dl>
-
-            <div className="mt-5 border-t border-white/20 pt-1" data-animate>
-              <HubNavigation />
-            </div>
           </div>
           <figure
-            className="hidden self-end border border-white/20 bg-black/20 p-3 backdrop-blur-sm lg:block"
+            className="relative mt-10 aspect-[16/10] overflow-hidden border border-white/25 bg-[#171719] xl:absolute xl:top-[20vh] xl:right-0 xl:bottom-36 xl:left-[43%] xl:mt-0 xl:aspect-auto"
             data-animate
           >
             <img
               alt="Liebherr LTM 1500-8.1, grúa de mayor capacidad de la flota."
-              className="aspect-[3/4] w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              data-route-background
+              fetchPriority="high"
               src="/media/flota-liebherr-ltm1500-8-1-01.avif"
             />
-            <figcaption className="border-t border-white/15 pt-3 text-xs leading-5 text-white/70">
-              <span className="font-bold tracking-[0.16em] text-[#ff7777] uppercase">
-                Buque insignia
-              </span>
-              <br />
-              LTM 1500-8.1 · 700 Tn
+            <div className="absolute inset-0 bg-linear-to-t from-[#09090a]/95 via-[#09090a]/10 to-transparent" />
+            <div className="absolute top-0 bottom-0 left-0 w-px bg-[#ed2828]" />
+            <figcaption className="absolute right-0 bottom-0 left-0 grid gap-3 p-5 sm:grid-cols-[1fr_auto] sm:items-end sm:p-8">
+              <div>
+                <span className="text-xs font-bold tracking-[0.18em] text-[#ff7777] uppercase">
+                  Buque insignia
+                </span>
+                <p className="mt-3 text-xl font-semibold tracking-[-0.04em] text-white sm:text-3xl">
+                  Liebherr LTM 1500-8.1
+                </p>
+              </div>
+              <p className="text-5xl font-semibold tracking-[-0.08em] text-white sm:text-6xl">
+                700 <span className="text-xl tracking-normal">Tn</span>
+              </p>
+              <p className="col-span-full max-w-xl border-t border-white/25 pt-3 text-xs leading-5 text-white/70">
+                La grúa de mayor capacidad de la flota corporativa.
+              </p>
             </figcaption>
           </figure>
-          <p
-            className="col-span-full hidden text-xs tracking-[0.15em] text-white/45 uppercase lg:block"
+          <div
+            className="relative z-10 mt-8 border-t border-white/20 pt-1 xl:absolute xl:right-0 xl:bottom-7 xl:left-0 xl:mt-0"
             data-animate
           >
-            ← → capítulos · Esc índice
-          </p>
+            <HubNavigation />
+          </div>
         </div>
       </div>
     </section>

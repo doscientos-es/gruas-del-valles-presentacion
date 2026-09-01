@@ -94,16 +94,9 @@ export function PresentationLayout() {
   const currentSection = presentationSections[currentIndex];
   const previousSection = presentationSections[currentIndex - 1];
   const nextSection = presentationSections[currentIndex + 1];
-  const isClosingSlide = location.pathname === "/final";
-  const currentStepId =
-    currentSection?.id ?? (isClosingSlide ? "final" : undefined);
-  const currentStepNumber = isClosingSlide
-    ? presentationSections.length + 1
-    : currentIndex + 1;
-  const progressSteps = [
-    ...presentationSections,
-    { id: "final", label: "Cierre" },
-  ];
+  const currentStepId = currentSection?.id;
+  const currentStepNumber = currentIndex + 1;
+  const progressSteps = presentationSections;
 
   useEffect(() => {
     function handleKeyboardNavigation(event: KeyboardEvent) {
@@ -127,29 +120,23 @@ export function PresentationLayout() {
         return;
       }
 
-      if (event.key === "ArrowRight" && !isClosingSlide) {
+      if (event.key === "ArrowRight" && currentIndex >= 0) {
         event.preventDefault();
-        navigate(`/${nextSection?.id ?? "final"}`);
+        if (nextSection) {
+          navigate(`/${nextSection.id}`);
+        }
       }
 
-      if (event.key === "ArrowLeft" && (currentIndex >= 0 || isClosingSlide)) {
+      if (event.key === "ArrowLeft" && currentIndex >= 0) {
         event.preventDefault();
-        navigate(
-          `/${isClosingSlide ? "contacto" : (previousSection?.id ?? "")}`,
-        );
+        navigate(`/${previousSection?.id ?? ""}`);
       }
     }
 
     window.addEventListener("keydown", handleKeyboardNavigation);
     return () =>
       window.removeEventListener("keydown", handleKeyboardNavigation);
-  }, [
-    currentIndex,
-    isClosingSlide,
-    navigate,
-    nextSection?.id,
-    previousSection?.id,
-  ]);
+  }, [currentIndex, navigate, nextSection, previousSection]);
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#0b0b0c] text-white">
@@ -197,11 +184,11 @@ export function PresentationLayout() {
           className="fixed inset-x-0 bottom-0 z-30 border-t border-white/15 bg-[#0b0b0c]/85 backdrop-blur-md"
         >
           <div className="mx-auto flex w-full max-w-[90rem] items-center gap-4 px-6 py-3 sm:px-10">
-            {previousSection || isClosingSlide ? (
+            {previousSection ? (
               <Link
-                aria-label={`Capítulo anterior: ${isClosingSlide ? "Contacto" : previousSection?.label}`}
+                aria-label={`Capítulo anterior: ${previousSection.label}`}
                 className="hidden items-center gap-2 text-sm font-semibold text-white/65 transition hover:text-white sm:inline-flex"
-                to={`/${isClosingSlide ? "contacto" : previousSection?.id}`}
+                to={`/${previousSection.id}`}
               >
                 <ArrowLeft aria-hidden="true" size={16} /> Anterior
               </Link>
@@ -239,21 +226,21 @@ export function PresentationLayout() {
             <span className="hidden text-xs tracking-[0.12em] text-white/45 uppercase lg:block">
               ← → Navegar
             </span>
-            {isClosingSlide ? (
+            {nextSection ? (
+              <Link
+                aria-label={`Siguiente capítulo: ${nextSection.label}`}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
+                to={`/${nextSection.id}`}
+              >
+                Siguiente <ArrowRight aria-hidden="true" size={16} />
+              </Link>
+            ) : (
               <Link
                 aria-label="Volver al índice de la presentación"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
                 to="/"
               >
                 Índice <ArrowRight aria-hidden="true" size={16} />
-              </Link>
-            ) : (
-              <Link
-                aria-label={`Siguiente capítulo: ${nextSection?.label ?? "Cierre"}`}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
-                to={`/${nextSection?.id ?? "final"}`}
-              >
-                Siguiente <ArrowRight aria-hidden="true" size={16} />
               </Link>
             )}
           </div>
