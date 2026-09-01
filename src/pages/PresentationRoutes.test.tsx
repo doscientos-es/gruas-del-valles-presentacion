@@ -24,15 +24,22 @@ describe("presentation routes", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getAllByText(/700 Tn/i)).not.toHaveLength(0);
+    expect(document.querySelectorAll("[data-route-background]")).toHaveLength(
+      4,
+    );
+    expect(
+      screen.getByRole("navigation", { name: /progreso de presentación/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("link", { current: "step" })).toBeNull();
+    expect(screen.getByText("Selección de flota")).toBeInTheDocument();
     expect(
       screen
         .getAllByRole("link")
         .filter((link) => link.getAttribute("href")?.startsWith("/")).length,
     ).toBeGreaterThanOrEqual(5);
-    expect(screen.getByRole("link", { name: /seguridad/i })).toHaveAttribute(
-      "href",
-      "/seguridad",
-    );
+    expect(
+      screen.getAllByRole("link", { name: /seguridad/i })[0],
+    ).toHaveAttribute("href", "/seguridad");
   });
 
   it("does not expose certifications as a standalone route", () => {
@@ -63,9 +70,25 @@ describe("presentation routes", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", {
-        name: /siguiente capítulo: equipo y experiencia/i,
+        name: /siguiente capítulo: selección de flota/i,
       }),
-    ).toHaveAttribute("href", "/equipo");
+    ).toHaveAttribute("href", "/flota-completa");
+  });
+
+  it("shows a representative grid of fleet vehicles", () => {
+    render(
+      <MemoryRouter initialEntries={["/flota-completa"]}>
+        <AppRoutes />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: /medios para cada escala/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: /spierings sk1265-at6/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Palfinger PK200002L SH")).toBeInTheDocument();
   });
 
   it("integrates each operation description with its project image", () => {
@@ -94,7 +117,21 @@ describe("presentation routes", () => {
     fireEvent.keyDown(window, { key: "ArrowRight" });
     expect(
       screen.getByRole("heading", {
+        name: /medios para cada escala de operación/i,
+      }),
+    ).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    expect(
+      screen.getByRole("heading", {
         name: /experiencia técnica donde más importa/i,
+      }),
+    ).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: "ArrowLeft" });
+    expect(
+      screen.getByRole("heading", {
+        name: /medios para cada escala de operación/i,
       }),
     ).toBeInTheDocument();
 

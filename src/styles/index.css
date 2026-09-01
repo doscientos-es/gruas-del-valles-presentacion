@@ -47,6 +47,36 @@
   transition: transform 150ms ease;
 }
 
+@keyframes home-background-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes home-background-pan {
+  from {
+    object-position: 42% 50%;
+    transform: scale(1.08);
+  }
+
+  to {
+    object-position: 58% 50%;
+    transform: scale(1.02);
+  }
+}
+
+.home-background-progress {
+  animation: home-background-progress 7s linear forwards;
+}
+
+.home-background-pan {
+  animation: home-background-pan 7s ease-out forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root:root *,
   :root:root *::before,

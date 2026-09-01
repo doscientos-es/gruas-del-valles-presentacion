@@ -1,20 +1,79 @@
-import { HubNavigation } from "@/components/navigation/HubNavigation";
+import { useEffect, useState } from "react";
+
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
+
+const homeBackgrounds = [
+  "/media/flota-liebherr-ltm1500-8-1-01.avif",
+  "/media/hero-grua-accion-2024-01.avif",
+  "/media/operacion-industrial-ltm1350-2021.avif",
+  "/media/operacion-puerto-2020.avif",
+] as const;
 
 export function HomePage() {
+  const [activeBackground, setActiveBackground] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setActiveBackground((current) => (current + 1) % homeBackgrounds.length);
+    }, 7000);
+
+    return () => window.clearInterval(interval);
+  }, [prefersReducedMotion]);
+
   return (
     <section data-route-content>
-      <div className="relative isolate min-h-[100svh] overflow-hidden bg-[#111114]">
+      <div className="relative isolate min-h-[100svh] overflow-hidden bg-[#0b0b0c]">
+        {homeBackgrounds.map((src, index) => (
+          <div
+            className={`absolute inset-0 -z-30 overflow-hidden transition-opacity duration-[1500ms] ease-out motion-reduce:transition-none ${index === activeBackground ? "opacity-100" : "opacity-0"}`}
+            data-route-background
+            key={src}
+          >
+            <img
+              alt=""
+              aria-hidden="true"
+              className={`h-full w-full object-cover object-center ${index === activeBackground && !prefersReducedMotion ? "home-background-pan" : ""}`}
+              fetchPriority={index === 0 ? "high" : "auto"}
+              src={src}
+            />
+          </div>
+        ))}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_25%,rgba(255,119,119,0.1),transparent_28%),radial-gradient(circle_at_82%_8%,rgba(255,255,255,0.06),transparent_24%),linear-gradient(125deg,#19191b_0%,#0b0b0c_48%,#141416_100%)]"
+          className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_15%_80%,rgba(237,40,40,0.18),transparent_32%),linear-gradient(90deg,rgba(9,9,10,0.92)_0%,rgba(9,9,10,0.62)_43%,rgba(9,9,10,0.1)_78%),linear-gradient(0deg,rgba(9,9,10,0.96)_0%,transparent_55%)]"
         />
-        <div className="relative mx-auto flex min-h-[100svh] max-w-[100rem] flex-col px-6 pt-28 pb-10 sm:px-10 sm:pb-12 xl:pt-24 xl:pb-0">
-          <div className="relative z-10 max-w-[34rem] xl:max-w-[32rem] xl:pt-[11vh]">
+        {!prefersReducedMotion ? (
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-20 z-10"
+            data-animate
+          >
+            <div className="mx-auto flex max-w-[100rem] items-center gap-3 px-6 sm:px-10">
+              <div className="h-px flex-1 overflow-hidden bg-white/25">
+                <span
+                  className="home-background-progress block h-full origin-left bg-[#ed2828]"
+                  key={activeBackground}
+                />
+              </div>
+              <span className="text-[0.65rem] font-bold tracking-[0.16em] text-white/75 tabular-nums">
+                {String(activeBackground + 1).padStart(2, "0")} /{" "}
+                {String(homeBackgrounds.length).padStart(2, "0")}
+              </span>
+            </div>
+          </div>
+        ) : null}
+        <div className="relative mx-auto flex min-h-svh max-w-[100rem] flex-col px-6 pt-28 pb-20 sm:px-10 sm:pb-20">
+          <div className="relative z-10 mt-auto max-w-3xl">
             <h1
-              className="text-5xl font-semibold tracking-[-0.07em] text-white sm:text-6xl xl:text-7xl"
+              className="max-w-3xl text-5xl font-semibold tracking-[-0.07em] text-white sm:text-6xl lg:text-7xl xl:text-8xl"
               data-animate
             >
-              Capacidad y seguridad para operaciones críticas.
+              Capacidad y seguridad para operaciones críticas
             </h1>
             <p
               className="mt-6 max-w-lg text-base leading-7 text-white/75 sm:text-lg sm:leading-8"
@@ -24,7 +83,10 @@ export function HomePage() {
               elevar, transportar y planificar con confianza.
             </p>
 
-            <dl className="mt-10 border-y border-white/20" data-animate>
+            <dl
+              className="mt-9 grid max-w-3xl border-y border-white/25 sm:grid-cols-3 sm:divide-x sm:divide-white/25"
+              data-animate
+            >
               {[
                 ["Desde 1968", "Más de 55 años de experiencia en el sector."],
                 [
@@ -34,50 +96,16 @@ export function HomePage() {
                 ["Gran tonelaje", "Hasta 700 Tn de capacidad máxima."],
               ].map(([value, label]) => (
                 <div
-                  className="grid grid-cols-[7.5rem_1fr] gap-4 border-b border-white/20 py-4 last:border-b-0"
+                  className="border-b border-white/20 py-3.5 last:border-b-0 sm:border-b-0 sm:px-5 sm:first:pl-0"
                   key={value}
                 >
                   <dt className="text-sm font-semibold text-white">{value}</dt>
-                  <dd className="text-xs leading-5 text-white/65">{label}</dd>
+                  <dd className="mt-1.5 text-xs leading-5 text-white/70">
+                    {label}
+                  </dd>
                 </div>
               ))}
             </dl>
-          </div>
-          <figure
-            className="relative mt-10 aspect-[16/10] overflow-hidden border border-white/25 bg-[#171719] xl:absolute xl:top-[20vh] xl:right-0 xl:bottom-36 xl:left-[43%] xl:mt-0 xl:aspect-auto"
-            data-animate
-          >
-            <img
-              alt="Liebherr LTM 1500-8.1, grúa de mayor capacidad de la flota."
-              className="absolute inset-0 h-full w-full object-cover object-center"
-              data-route-background
-              fetchPriority="high"
-              src="/media/flota-liebherr-ltm1500-8-1-01.avif"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-[#09090a]/95 via-[#09090a]/10 to-transparent" />
-            <div className="absolute top-0 bottom-0 left-0 w-px bg-[#ed2828]" />
-            <figcaption className="absolute right-0 bottom-0 left-0 grid gap-3 p-5 sm:grid-cols-[1fr_auto] sm:items-end sm:p-8">
-              <div>
-                <span className="text-xs font-bold tracking-[0.18em] text-[#ff7777] uppercase">
-                  Buque insignia
-                </span>
-                <p className="mt-3 text-xl font-semibold tracking-[-0.04em] text-white sm:text-3xl">
-                  Liebherr LTM 1500-8.1
-                </p>
-              </div>
-              <p className="text-5xl font-semibold tracking-[-0.08em] text-white sm:text-6xl">
-                700 <span className="text-xl tracking-normal">Tn</span>
-              </p>
-              <p className="col-span-full max-w-xl border-t border-white/25 pt-3 text-xs leading-5 text-white/70">
-                La grúa de mayor capacidad de la flota corporativa.
-              </p>
-            </figcaption>
-          </figure>
-          <div
-            className="relative z-10 mt-8 border-t border-white/20 pt-1 xl:absolute xl:right-0 xl:bottom-7 xl:left-0 xl:mt-0"
-            data-animate
-          >
-            <HubNavigation />
           </div>
         </div>
       </div>

@@ -97,6 +97,7 @@ export function PresentationLayout() {
   const currentStepId = currentSection?.id;
   const currentStepNumber = currentIndex + 1;
   const progressSteps = presentationSections;
+  const isIndex = location.pathname === "/";
 
   useEffect(() => {
     function handleKeyboardNavigation(event: KeyboardEvent) {
@@ -178,29 +179,33 @@ export function PresentationLayout() {
       <main id="main-content" ref={contentRef} tabIndex={-1}>
         <Outlet />
       </main>
-      {currentStepId ? (
+      {currentStepId || location.pathname === "/" ? (
         <nav
           aria-label="Progreso de presentación"
           className="fixed inset-x-0 bottom-0 z-30 border-t border-white/15 bg-[#0b0b0c]/85 backdrop-blur-md"
         >
           <div className="mx-auto flex w-full max-w-[90rem] items-center gap-4 px-6 py-3 sm:px-10">
-            {previousSection ? (
-              <Link
-                aria-label={`Capítulo anterior: ${previousSection.label}`}
-                className="hidden items-center gap-2 text-sm font-semibold text-white/65 transition hover:text-white sm:inline-flex"
-                to={`/${previousSection.id}`}
-              >
-                <ArrowLeft aria-hidden="true" size={16} /> Anterior
-              </Link>
-            ) : (
-              <Link
-                aria-label="Volver a la portada"
-                className="hidden items-center gap-2 text-sm font-semibold text-white/65 transition hover:text-white sm:inline-flex"
-                to="/"
-              >
-                <ArrowLeft aria-hidden="true" size={16} /> Portada
-              </Link>
-            )}
+            {currentStepId ? (
+              <>
+                {previousSection ? (
+                  <Link
+                    aria-label={`Capítulo anterior: ${previousSection.label}`}
+                    className="hidden items-center gap-2 text-sm font-semibold text-white/65 transition hover:text-white sm:inline-flex"
+                    to={`/${previousSection.id}`}
+                  >
+                    <ArrowLeft aria-hidden="true" size={16} /> Anterior
+                  </Link>
+                ) : (
+                  <Link
+                    aria-label="Volver a la portada"
+                    className="hidden items-center gap-2 text-sm font-semibold text-white/65 transition hover:text-white sm:inline-flex"
+                    to="/"
+                  >
+                    <ArrowLeft aria-hidden="true" size={16} /> Portada
+                  </Link>
+                )}
+              </>
+            ) : null}
             <ol className="flex flex-1 items-center gap-1.5">
               {progressSteps.map((section, index) => (
                 <li className="flex-1" key={section.id}>
@@ -209,40 +214,55 @@ export function PresentationLayout() {
                       section.id === currentStepId ? "step" : undefined
                     }
                     aria-label={`Ir al capítulo ${index + 1}: ${section.label}`}
-                    className="group block h-6 py-2 focus-visible:outline-none"
+                    className={`group relative block focus-visible:outline-none ${
+                      isIndex ? "h-11" : "h-6 py-2"
+                    }`}
                     to={`/${section.id}`}
                   >
                     <span
-                      className={`block h-px transition duration-300 ${
+                      className={
+                        isIndex
+                          ? "pointer-events-none absolute inset-x-0 top-1 truncate px-1 text-center text-[0.58rem] font-bold tracking-[0.1em] text-white/85 uppercase"
+                          : "pointer-events-none absolute bottom-[calc(100%+0.35rem)] left-1/2 -translate-x-1/2 border border-white/15 bg-[#09090a]/95 px-2 py-1 text-[0.6rem] font-bold tracking-[0.13em] whitespace-nowrap text-white uppercase opacity-0 shadow-lg transition group-hover:opacity-100 group-focus-visible:opacity-100"
+                      }
+                    >
+                      {section.label}
+                    </span>
+                    <span
+                      className={`h-px transition duration-300 ${
                         section.id === currentStepId
                           ? "bg-[#ed2828]"
-                          : "bg-white/25 group-hover:bg-white/70"
-                      }`}
+                          : "bg-white/25 group-hover:bg-white/80"
+                      } ${isIndex ? "absolute right-1 bottom-2 left-1" : "block"}`}
                     />
                   </Link>
                 </li>
               ))}
             </ol>
-            <span className="hidden text-xs tracking-[0.12em] text-white/45 uppercase lg:block">
-              ← → Navegar
-            </span>
-            {nextSection ? (
-              <Link
-                aria-label={`Siguiente capítulo: ${nextSection.label}`}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
-                to={`/${nextSection.id}`}
-              >
-                Siguiente <ArrowRight aria-hidden="true" size={16} />
-              </Link>
-            ) : (
-              <Link
-                aria-label="Volver al índice de la presentación"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
-                to="/"
-              >
-                Índice <ArrowRight aria-hidden="true" size={16} />
-              </Link>
-            )}
+            {currentStepId ? (
+              <>
+                <span className="hidden text-xs tracking-[0.12em] text-white/45 uppercase lg:block">
+                  ← → Navegar
+                </span>
+                {nextSection ? (
+                  <Link
+                    aria-label={`Siguiente capítulo: ${nextSection.label}`}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
+                    to={`/${nextSection.id}`}
+                  >
+                    Siguiente <ArrowRight aria-hidden="true" size={16} />
+                  </Link>
+                ) : (
+                  <Link
+                    aria-label="Volver al índice de la presentación"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
+                    to="/"
+                  >
+                    Índice <ArrowRight aria-hidden="true" size={16} />
+                  </Link>
+                )}
+              </>
+            ) : null}
           </div>
         </nav>
       ) : null}

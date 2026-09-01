@@ -1,6 +1,7 @@
 export type SectionId =
   | "seguridad"
   | "flota"
+  | "flota-completa"
   | "equipo"
   | "casos-de-exito"
   | "contacto";
@@ -74,6 +75,17 @@ export const presentationSections: readonly PresentationSection[] = [
           "Dato comunicado en la cabecera de la landing corporativa; se acompañará de fichas técnicas autorizadas.",
       },
     ],
+  },
+  {
+    id: "flota-completa",
+    label: "Selección de flota",
+    eyebrow: "Flota en servicio",
+    title: "Medios para cada escala de operación.",
+    summary:
+      "Del gran tonelaje a las grúas de construcción y camiones-grúa: una selección de vehículos para responder a diferentes necesidades.",
+    image: "/media/flota-liebherr-ltm1400-7-1-01.avif",
+    imageAlt: "Grúa Liebherr LTM 1400-7.1 de Grúas del Vallès.",
+    details: [],
   },
   {
     id: "equipo",

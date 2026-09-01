@@ -9,6 +9,57 @@ type SlideProps = {
   index: number;
 };
 
+const fleetHighlights = [
+  {
+    category: "Gran tonelaje",
+    image: "/media/flota-liebherr-ltm1400-7-1-01.avif",
+    model: "Liebherr LTM 1400-7.1",
+    specification: "400 Tn",
+  },
+  {
+    category: "Gran tonelaje",
+    image: "/media/flota-liebherr-ltm1350-6-1-01.avif",
+    model: "Liebherr LTM 1350-6.1",
+    specification: "350 Tn",
+  },
+  {
+    category: "Gran tonelaje",
+    image: "/media/flota-grove-gmk5250xl-1-01.avif",
+    model: "Grove GMK 5250XL-1",
+    specification: "250 Tn",
+  },
+  {
+    category: "Móvil autopropulsada",
+    image: "/media/flota-grove-gmt5150l-01.avif",
+    model: "Grove GMT 5150L",
+    specification: "150 Tn",
+  },
+  {
+    category: "Móvil autopropulsada",
+    image: "/media/flota-liebherr-ltm1100-5-3-01.avif",
+    model: "Liebherr LTM 1100-5.3",
+    specification: "100 Tn",
+  },
+  {
+    category: "Construcción",
+    image: "/media/flota-spierings-sk1265-at6-01.avif",
+    model: "Spierings SK1265-AT6",
+    specification: "60 m de pluma",
+  },
+  {
+    category: "Construcción",
+    image: "/media/flota-liebherr-mk88-4-1-01.avif",
+    model: "Liebherr MK 88-4.1",
+    specification: "45 m de pluma",
+  },
+  {
+    category: "Camión-grúa",
+    image: "/media/flota-camion-grua-200tm-01.avif",
+    model: "Palfinger PK200002L SH",
+    specification: "200 tm",
+  },
+] as const;
+
 function SlideFrame({
   children,
   section,
@@ -184,6 +235,63 @@ function FleetSlide({ section, index }: SlideProps) {
             </div>
           ))}
         </dl>
+      </div>
+    </SlideFrame>
+  );
+}
+
+function FleetOverviewSlide({ section, index }: SlideProps) {
+  return (
+    <SlideFrame section={section}>
+      <div className="mx-auto flex min-h-[100svh] max-w-[90rem] flex-col px-6 pt-28 pb-24 sm:px-10">
+        <div className="grid items-end gap-6 lg:grid-cols-[1fr_minmax(18rem,0.55fr)]">
+          <div>
+            <p
+              className="text-xs font-bold tracking-[0.24em] text-[#ff7777] uppercase"
+              data-animate
+            >
+              0{index + 1} · {section.eyebrow}
+            </p>
+            <h1
+              className="mt-5 max-w-4xl text-4xl font-semibold tracking-[-0.06em] text-white sm:text-6xl"
+              data-animate
+            >
+              {section.title}
+            </h1>
+          </div>
+          <p className="max-w-md text-sm leading-6 text-white/70" data-animate>
+            {section.summary}
+          </p>
+        </div>
+        <ul
+          className="mt-8 grid flex-1 grid-cols-2 gap-px overflow-hidden border border-white/20 bg-white/20 sm:grid-cols-4"
+          data-animate
+        >
+          {fleetHighlights.map((vehicle) => (
+            <li
+              className="group relative min-h-44 overflow-hidden bg-[#111114] p-4 sm:p-5"
+              key={vehicle.model}
+            >
+              <img
+                alt={vehicle.model}
+                className="absolute inset-0 h-full w-full object-contain p-4 opacity-85 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
+                src={vehicle.image}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#09090a] via-[#09090a]/18 to-[#09090a]/40" />
+              <p className="relative text-[0.62rem] font-bold tracking-[0.16em] text-white/60 uppercase">
+                {vehicle.category}
+              </p>
+              <div className="absolute right-4 bottom-4 left-4 sm:right-5 sm:bottom-5 sm:left-5">
+                <p className="text-xl font-semibold tracking-[-0.05em] text-white sm:text-2xl">
+                  {vehicle.specification}
+                </p>
+                <h2 className="mt-1 text-xs font-semibold text-white/80">
+                  {vehicle.model}
+                </h2>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </SlideFrame>
   );
@@ -408,6 +516,7 @@ export function SectionPage() {
   const props = { section, index: sectionIndex };
   if (section.id === "seguridad") return <SafetySlide {...props} />;
   if (section.id === "flota") return <FleetSlide {...props} />;
+  if (section.id === "flota-completa") return <FleetOverviewSlide {...props} />;
   if (section.id === "equipo") return <TeamSlide {...props} />;
   if (section.id === "casos-de-exito") return <ProjectsSlide {...props} />;
   return <ContactSlide {...props} />;
