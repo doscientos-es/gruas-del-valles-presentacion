@@ -1,7 +1,4 @@
-import { ArrowDownRight, ArrowRight, Phone } from 'lucide-react'
-import { Link } from 'react-router'
-
-import { HubNavigation } from '@/components/navigation/HubNavigation'
+import { HubNavigation } from "@/components/navigation/HubNavigation";
 
 export function HomePage() {
   return (
@@ -9,7 +6,8 @@ export function HomePage() {
       <div className="relative isolate min-h-[100svh] overflow-hidden bg-[#0b0b0c]">
         <img
           alt="Grúa Liebherr LTM 1100 de Grúas del Vallès en operación."
-          className="absolute inset-0 -z-20 h-full w-full object-cover opacity-55"
+          className="absolute inset-0 -z-20 h-full w-full object-cover opacity-60"
+          data-route-background
           fetchPriority="high"
           height="1280"
           src="/media/hero-grua-accion-2024-01.avif"
@@ -17,62 +15,75 @@ export function HomePage() {
         />
         <div className="absolute inset-0 -z-10 bg-linear-to-r from-[#0b0b0c] via-[#0b0b0c]/82 to-[#0b0b0c]/20" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-2/5 bg-linear-to-t from-[#0b0b0c] to-transparent" />
-        <div className="mx-auto flex min-h-svh max-w-360 flex-col justify-end px-6 pt-28 pb-10 sm:px-10 sm:pb-12 lg:pt-32">
-          <h1
-            className="mt-5 max-w-5xl text-5xl font-semibold tracking-[-0.055em] text-white sm:text-6xl lg:text-8xl"
+        <div className="mx-auto grid min-h-svh max-w-360 items-end gap-10 px-6 pt-28 pb-10 sm:px-10 sm:pb-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16 lg:pt-32">
+          <div>
+            <h1
+              className="mt-5 max-w-5xl text-5xl font-semibold tracking-[-0.055em] text-white sm:text-6xl lg:text-8xl"
+              data-animate
+            >
+              Capacidad y seguridad para operaciones críticas.
+            </h1>
+            <p
+              className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8"
+              data-animate
+            >
+              Más de 55 años de experiencia, medios propios y servicio para
+              elevar, transportar y planificar con confianza.
+            </p>
+
+            <dl
+              className="mt-10 grid max-w-3xl gap-px bg-white/20 sm:grid-cols-3"
+              data-animate
+            >
+              {[
+                ["Desde 1968", "Más de 55 años de experiencia en el sector."],
+                [
+                  "Flota propia",
+                  "86 vehículos para responder con medios propios.",
+                ],
+                ["Gran tonelaje", "Hasta 700 Tn de capacidad máxima."],
+              ].map(([value, label]) => (
+                <div
+                  className="bg-[#111114]/80 px-4 py-4 backdrop-blur-sm sm:px-5"
+                  key={value}
+                >
+                  <dt className="text-sm font-semibold text-white">{value}</dt>
+                  <dd className="mt-2 text-xs leading-5 text-white/65">
+                    {label}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className="mt-5 border-t border-white/20 pt-1" data-animate>
+              <HubNavigation />
+            </div>
+          </div>
+          <figure
+            className="hidden self-end border border-white/20 bg-black/20 p-3 backdrop-blur-sm lg:block"
             data-animate
           >
-            Capacidad y seguridad para operaciones críticas.
-          </h1>
+            <img
+              alt="Liebherr LTM 1500-8.1, grúa de mayor capacidad de la flota."
+              className="aspect-[3/4] w-full object-cover"
+              src="/media/flota-liebherr-ltm1500-8-1-01.avif"
+            />
+            <figcaption className="border-t border-white/15 pt-3 text-xs leading-5 text-white/70">
+              <span className="font-bold tracking-[0.16em] text-[#ff7777] uppercase">
+                Buque insignia
+              </span>
+              <br />
+              LTM 1500-8.1 · 700 Tn
+            </figcaption>
+          </figure>
           <p
-            className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8"
+            className="col-span-full hidden text-xs tracking-[0.15em] text-white/45 uppercase lg:block"
             data-animate
           >
-            Más de 55 años de experiencia, medios propios y servicio para elevar, transportar y
-            planificar con confianza.
+            ← → capítulos · Esc índice
           </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row" data-animate>
-            <Link
-              className="inline-flex items-center justify-center gap-2 bg-[#d60b0c] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#a80909]"
-              to="/seguridad"
-            >
-              Iniciar presentación
-              <ArrowRight aria-hidden="true" size={17} />
-            </Link>
-            <a
-              className="inline-flex items-center justify-center gap-2 border border-white/40 px-5 py-3 text-sm font-bold text-white transition hover:border-white hover:bg-white hover:text-[#121212]"
-              href="tel:+34938497022"
-            >
-              <Phone aria-hidden="true" size={17} />
-              93 849 70 22
-            </a>
-          </div>
-          <dl className="mt-12 grid max-w-2xl grid-cols-3 border-l border-white/25" data-animate>
-            {[
-              ['+55', 'años de experiencia'],
-              ['86', 'vehículos propios'],
-              ['700 Tn', 'capacidad máxima'],
-            ].map(([value, label]) => (
-              <div className="border-r border-white/25 px-4 first:pl-0 sm:px-6" key={label}>
-                <dt className="text-xs leading-4 text-white/65">{label}</dt>
-                <dd className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                  {value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <div
-            className="mt-10 flex items-center gap-3 text-xs font-bold tracking-[0.18em] text-white/55 uppercase"
-            data-animate
-          >
-            <ArrowDownRight aria-hidden="true" size={16} />
-            Una operación bajo control.
-          </div>
-          <div className="mt-5 border-t border-white/20 pt-1" data-animate>
-            <HubNavigation />
-          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

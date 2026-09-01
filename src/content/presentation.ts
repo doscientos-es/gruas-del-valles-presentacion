@@ -51,17 +51,17 @@ export const presentationSections: readonly PresentationSection[] = [
   {
     id: "flota",
     label: "Flota",
-    eyebrow: "Medios propios",
-    title: "La máquina adecuada para cada operación.",
+    eyebrow: "Buque insignia",
+    title: "Liebherr LTM 1500-8.1. La mejor grúa de la flota.",
     summary:
-      "Flota propia de grúas móviles autopropulsadas, transporte y vehículos auxiliares para responder con capacidad y alcance.",
+      "Una grúa móvil de 700 Tn que representa la capacidad de una flota propia preparada para operaciones de gran tonelaje.",
     image: "/media/flota-liebherr-ltm1500-8-1-01.avif",
     imageAlt: "Grúa Liebherr de la flota de Grúas del Vallès.",
     details: [
       {
-        title: "Hasta 700 Tn",
+        title: "700 Tn de capacidad máxima",
         description:
-          "La flota corporativa indica capacidad de elevación de hasta 700 toneladas.",
+          "La LTM 1500-8.1 es el mayor vehículo de la flota según la información corporativa y su buque insignia.",
       },
       {
         title: "86 vehículos propios",

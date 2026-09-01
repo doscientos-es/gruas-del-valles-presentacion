@@ -1,44 +1,68 @@
-import { useGSAP } from '@gsap/react'
-import { gsap } from 'gsap'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { useRef } from 'react'
-import { Link, Outlet, useLocation } from 'react-router'
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 
-import { presentationSections } from '@/content/presentation'
-import { useReducedMotion } from '@/shared/hooks/useReducedMotion'
+import { presentationSections } from "@/content/presentation";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
-gsap.registerPlugin(useGSAP)
+gsap.registerPlugin(useGSAP);
 
 export function PresentationLayout() {
-  const contentRef = useRef<HTMLElement>(null)
-  const location = useLocation()
-  const prefersReducedMotion = useReducedMotion()
+  const contentRef = useRef<HTMLElement>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
 
   useGSAP(
     () => {
       if (prefersReducedMotion) {
-        return
+        return;
       }
 
-      const routeContent = contentRef.current?.querySelector<HTMLElement>('[data-route-content]')
+      const routeContent = contentRef.current?.querySelector<HTMLElement>(
+        "[data-route-content]",
+      );
       const animatedElements = routeContent
-        ? Array.from(routeContent.querySelectorAll<HTMLElement>('[data-animate]'))
-        : []
+        ? Array.from(
+            routeContent.querySelectorAll<HTMLElement>("[data-animate]"),
+          )
+        : [];
+      const backgrounds = routeContent
+        ? Array.from(
+            routeContent.querySelectorAll<HTMLElement>(
+              "[data-route-background]",
+            ),
+          )
+        : [];
 
       if (routeContent) {
-        const timeline = gsap.timeline()
+        const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-        timeline.fromTo(
-          routeContent,
-          { autoAlpha: 0, y: 18 },
-          {
-            autoAlpha: 1,
-            clearProps: 'transform,opacity,visibility',
-            duration: 0.58,
-            ease: 'power3.out',
-            y: 0,
-          },
-        )
+        timeline
+          .set(routeContent, { autoAlpha: 1 })
+          .fromTo(
+            routeContent,
+            { clipPath: "inset(0 0 100% 0)" },
+            {
+              clearProps: "clipPath",
+              clipPath: "inset(0 0 0% 0)",
+              duration: 0.72,
+            },
+            "reveal",
+          )
+          .fromTo(
+            backgrounds,
+            { scale: 1.1 },
+            {
+              clearProps: "transform",
+              duration: 1.35,
+              ease: "power2.out",
+              scale: 1,
+            },
+            "reveal",
+          );
 
         if (animatedElements.length) {
           timeline.fromTo(
@@ -46,14 +70,14 @@ export function PresentationLayout() {
             { autoAlpha: 0, y: 28 },
             {
               autoAlpha: 1,
-              clearProps: 'transform,opacity,visibility',
-              duration: 0.62,
-              ease: 'power3.out',
-              stagger: 0.08,
+              clearProps: "transform,opacity,visibility",
+              duration: 0.66,
+              ease: "power3.out",
+              stagger: 0.1,
               y: 0,
             },
-            '-=0.28',
-          )
+            "reveal+=0.2",
+          );
         }
       }
     },
@@ -62,14 +86,70 @@ export function PresentationLayout() {
       revertOnUpdate: true,
       scope: contentRef,
     },
-  )
+  );
 
   const currentIndex = presentationSections.findIndex(
     (section) => `/${section.id}` === location.pathname,
-  )
-  const currentSection = presentationSections[currentIndex]
-  const previousSection = presentationSections[currentIndex - 1]
-  const nextSection = presentationSections[currentIndex + 1]
+  );
+  const currentSection = presentationSections[currentIndex];
+  const previousSection = presentationSections[currentIndex - 1];
+  const nextSection = presentationSections[currentIndex + 1];
+  const isClosingSlide = location.pathname === "/final";
+  const currentStepId =
+    currentSection?.id ?? (isClosingSlide ? "final" : undefined);
+  const currentStepNumber = isClosingSlide
+    ? presentationSections.length + 1
+    : currentIndex + 1;
+  const progressSteps = [
+    ...presentationSections,
+    { id: "final", label: "Cierre" },
+  ];
+
+  useEffect(() => {
+    function handleKeyboardNavigation(event: KeyboardEvent) {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+        return;
+      }
+
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        target.closest(
+          "a, button, input, textarea, select, [contenteditable='true'], [role='textbox']",
+        )
+      ) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        navigate("/");
+        return;
+      }
+
+      if (event.key === "ArrowRight" && !isClosingSlide) {
+        event.preventDefault();
+        navigate(`/${nextSection?.id ?? "final"}`);
+      }
+
+      if (event.key === "ArrowLeft" && (currentIndex >= 0 || isClosingSlide)) {
+        event.preventDefault();
+        navigate(
+          `/${isClosingSlide ? "contacto" : (previousSection?.id ?? "")}`,
+        );
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyboardNavigation);
+    return () =>
+      window.removeEventListener("keydown", handleKeyboardNavigation);
+  }, [
+    currentIndex,
+    isClosingSlide,
+    navigate,
+    nextSection?.id,
+    previousSection?.id,
+  ]);
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#0b0b0c] text-white">
@@ -90,11 +170,13 @@ export function PresentationLayout() {
             />
           </Link>
           <div className="flex items-center gap-4 text-xs font-semibold tracking-[0.15em] uppercase">
-            <span className="hidden text-white/55 sm:block">Presentación comercial</span>
-            {currentSection ? (
-              <span className="text-white">{String(currentIndex + 1).padStart(2, '0')} / 05</span>
+            {currentStepId ? (
+              <span className="text-white">
+                {String(currentStepNumber).padStart(2, "0")} /{" "}
+                {String(progressSteps.length).padStart(2, "0")}
+              </span>
             ) : null}
-            {location.pathname !== '/' ? (
+            {location.pathname !== "/" ? (
               <Link
                 className="inline-flex items-center gap-2 text-white/70 transition hover:text-white focus-visible:outline-none"
                 to="/"
@@ -109,17 +191,17 @@ export function PresentationLayout() {
       <main id="main-content" ref={contentRef} tabIndex={-1}>
         <Outlet />
       </main>
-      {currentSection ? (
+      {currentStepId ? (
         <nav
           aria-label="Progreso de presentación"
           className="fixed inset-x-0 bottom-0 z-30 border-t border-white/15 bg-[#0b0b0c]/85 backdrop-blur-md"
         >
           <div className="mx-auto flex w-full max-w-[90rem] items-center gap-4 px-6 py-3 sm:px-10">
-            {previousSection ? (
+            {previousSection || isClosingSlide ? (
               <Link
-                aria-label={`Capítulo anterior: ${previousSection.label}`}
+                aria-label={`Capítulo anterior: ${isClosingSlide ? "Contacto" : previousSection?.label}`}
                 className="hidden items-center gap-2 text-sm font-semibold text-white/65 transition hover:text-white sm:inline-flex"
-                to={`/${previousSection.id}`}
+                to={`/${isClosingSlide ? "contacto" : previousSection?.id}`}
               >
                 <ArrowLeft aria-hidden="true" size={16} /> Anterior
               </Link>
@@ -132,46 +214,51 @@ export function PresentationLayout() {
                 <ArrowLeft aria-hidden="true" size={16} /> Portada
               </Link>
             )}
-            <div className="flex flex-1 items-center gap-1.5" role="list">
-              {presentationSections.map((section, index) => (
-                <Link
-                  aria-current={section.id === currentSection.id ? 'step' : undefined}
-                  aria-label={`Ir al capítulo ${index + 1}: ${section.label}`}
-                  className="group h-6 flex-1 py-2 focus-visible:outline-none"
-                  key={section.id}
-                  role="listitem"
-                  to={`/${section.id}`}
-                >
-                  <span
-                    className={`block h-px transition duration-300 ${
-                      section.id === currentSection.id
-                        ? 'bg-[#ed2828]'
-                        : 'bg-white/25 group-hover:bg-white/70'
-                    }`}
-                  />
-                </Link>
+            <ol className="flex flex-1 items-center gap-1.5">
+              {progressSteps.map((section, index) => (
+                <li className="flex-1" key={section.id}>
+                  <Link
+                    aria-current={
+                      section.id === currentStepId ? "step" : undefined
+                    }
+                    aria-label={`Ir al capítulo ${index + 1}: ${section.label}`}
+                    className="group block h-6 py-2 focus-visible:outline-none"
+                    to={`/${section.id}`}
+                  >
+                    <span
+                      className={`block h-px transition duration-300 ${
+                        section.id === currentStepId
+                          ? "bg-[#ed2828]"
+                          : "bg-white/25 group-hover:bg-white/70"
+                      }`}
+                    />
+                  </Link>
+                </li>
               ))}
-            </div>
-            {nextSection ? (
+            </ol>
+            <span className="hidden text-xs tracking-[0.12em] text-white/45 uppercase lg:block">
+              ← → Navegar
+            </span>
+            {isClosingSlide ? (
               <Link
-                aria-label={`Siguiente capítulo: ${nextSection.label}`}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
-                to={`/${nextSection.id}`}
-              >
-                Siguiente <ArrowRight aria-hidden="true" size={16} />
-              </Link>
-            ) : (
-              <Link
-                aria-label="Cerrar presentación y volver a la portada"
+                aria-label="Volver al índice de la presentación"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
                 to="/"
               >
-                Cerrar <ArrowRight aria-hidden="true" size={16} />
+                Índice <ArrowRight aria-hidden="true" size={16} />
+              </Link>
+            ) : (
+              <Link
+                aria-label={`Siguiente capítulo: ${nextSection?.label ?? "Cierre"}`}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ff7777]"
+                to={`/${nextSection?.id ?? "final"}`}
+              >
+                Siguiente <ArrowRight aria-hidden="true" size={16} />
               </Link>
             )}
           </div>
         </nav>
       ) : null}
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import { ArrowUpRight } from 'lucide-react'
-import { Link } from 'react-router'
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router";
 
-import { presentationSections } from '@/content/presentation'
+import { presentationSections } from "@/content/presentation";
 
 export function HubNavigation() {
   return (
@@ -16,17 +16,21 @@ export function HubNavigation() {
                 to={`/${section.id}`}
               >
                 <span className="text-[0.65rem] font-bold tracking-[0.16em] text-[#ff7777] uppercase">
-                  {String(index + 1).padStart(2, '0')}
+                  {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="flex flex-1 items-center gap-2 text-sm font-semibold text-white transition group-hover:text-[#ff7777] sm:block">
                   {section.label}
-                  <ArrowUpRight aria-hidden="true" className="ml-auto sm:mt-2 sm:ml-0" size={16} />
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="ml-auto sm:mt-2 sm:ml-0"
+                    size={16}
+                  />
                 </span>
               </Link>
             </li>
-          )
+          );
         })}
       </ul>
     </nav>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
-  --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
+  --font-sans: "Arial", "Helvetica Neue", sans-serif;
 }
 
 @layer base {
