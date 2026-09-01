@@ -1,80 +1,86 @@
-import { ArrowRight } from "lucide-react";
-import { Link, useParams } from "react-router";
-import { getSection, presentationSections } from "@/content/presentation";
-import { NotFoundPage } from "@/pages/NotFoundPage";
+import { useParams } from 'react-router'
+
+import { getSection, presentationSections } from '@/content/presentation'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 
 export function SectionPage() {
-  const { sectionId } = useParams();
-  const section = getSection(sectionId);
+  const { sectionId } = useParams()
+  const section = getSection(sectionId)
 
   if (!section) {
-    return <NotFoundPage />;
+    return <NotFoundPage />
   }
 
-  const nextSection =
-    presentationSections[
-      (presentationSections.indexOf(section) + 1) % presentationSections.length
-    ];
-  const isLastSection = section.id === presentationSections.at(-1)?.id;
+  const sectionIndex = presentationSections.indexOf(section)
 
   return (
-    <section
-      className="mx-auto w-full max-w-6xl px-6 pb-14 pt-12 sm:px-10 lg:pb-24 lg:pt-16"
-      data-route-content
-    >
-      <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-        <div data-animate>
-          <p className="text-sm font-semibold tracking-[0.16em] text-[#d60b0c] uppercase">
-            {section.eyebrow}
-          </p>
-          <h1 className="mt-5 max-w-3xl text-4xl font-bold tracking-tight text-[#121212] sm:text-5xl">
-            {section.title}
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-[#4b4b4b]">
-            {section.summary}
-          </p>
-        </div>
-        <div className="relative overflow-hidden bg-[#121212]" data-animate>
-          <img
-            alt={section.imageAlt}
-            className="aspect-16/10 w-full object-cover opacity-90"
-            loading="lazy"
-            src={section.image}
-          />
-          <span className="absolute right-0 bottom-0 bg-[#d60b0c] px-4 py-2 text-xs font-bold tracking-[0.12em] text-white uppercase">
-            Grúas del Vallès
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-12 grid gap-3 sm:grid-cols-3">
-        {section.details.map((detail, index) => (
-          <article
-            className="border border-black/10 bg-[#f6f6f7] p-5 sm:p-6"
-            data-animate
-            key={detail.title}
-          >
-            <p className="text-sm font-semibold text-[#d60b0c]">0{index + 1}</p>
-            <h2 className="mt-8 text-lg font-semibold text-[#121212]">
-              {detail.title}
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-[#4b4b4b]">
-              {detail.description}
+    <section className="relative isolate min-h-[100svh] overflow-hidden" data-route-content>
+      <img
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 -z-20 h-full w-full object-cover opacity-45"
+        src={section.image}
+      />
+      <div className="absolute inset-0 -z-10 bg-linear-to-r from-[#0b0b0c] via-[#0b0b0c]/90 to-[#0b0b0c]/25" />
+      <div className="absolute inset-x-0 bottom-0 -z-10 h-2/3 bg-linear-to-t from-[#0b0b0c] to-transparent" />
+      <div className="mx-auto flex min-h-[100svh] w-full max-w-[90rem] flex-col justify-center px-6 pt-28 pb-24 sm:px-10 lg:pb-28">
+        <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(17rem,0.8fr)] lg:gap-16">
+          <div>
+            <p
+              className="text-xs font-bold tracking-[0.24em] text-[#ff7777] uppercase"
+              data-animate
+            >
+              {String(sectionIndex + 1).padStart(2, '0')} — {section.eyebrow}
             </p>
-          </article>
-        ))}
+            <h1
+              className="mt-5 max-w-4xl text-5xl font-semibold tracking-[-0.055em] text-white sm:text-6xl lg:text-7xl"
+              data-animate
+            >
+              {section.title}
+            </h1>
+            <p
+              className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8"
+              data-animate
+            >
+              {section.summary}
+            </p>
+          </div>
+          <div
+            className="relative self-stretch overflow-hidden border border-white/20 bg-black/20 p-5 backdrop-blur-sm sm:p-6"
+            data-animate
+          >
+            <span
+              className="absolute -top-8 -right-2 text-8xl font-semibold tracking-[-0.1em] text-white/10"
+              aria-hidden="true"
+            >
+              {String(sectionIndex + 1).padStart(2, '0')}
+            </span>
+            <p className="relative text-xs font-bold tracking-[0.18em] text-white/55 uppercase">
+              Idea clave
+            </p>
+            <p className="relative mt-5 text-xl leading-8 font-medium text-white">
+              {section.details[0]?.title}
+            </p>
+            <p className="relative mt-3 text-sm leading-6 text-white/65">
+              {section.details[0]?.description}
+            </p>
+          </div>
+        </div>
+        <ol className="mt-10 grid gap-0 border-t border-white/20 sm:grid-cols-3" data-animate>
+          {section.details.map((detail, index) => (
+            <li
+              className="border-b border-white/20 py-5 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0"
+              key={detail.title}
+            >
+              <p className="text-xs font-bold tracking-[0.16em] text-[#ff7777] uppercase">
+                {String(index + 1).padStart(2, '0')}
+              </p>
+              <h2 className="mt-4 text-base font-semibold text-white">{detail.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-white/65">{detail.description}</p>
+            </li>
+          ))}
+        </ol>
       </div>
-
-      <Link
-        className="mt-10 inline-flex items-center gap-2 bg-[#d60b0c] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#a80909] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d60b0c] focus-visible:ring-offset-2"
-        data-animate
-        to={isLastSection ? "/" : `/${nextSection.id}`}
-      >
-        {isLastSection
-          ? "Volver al índice"
-          : `Continuar con ${nextSection.label}`}
-        <ArrowRight aria-hidden="true" size={17} />
-      </Link>
     </section>
-  );
+  )
 }

@@ -1,12 +1,12 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Arial", "Helvetica Neue", sans-serif;
+  --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
 }
 
 @layer base {
   html {
-    background: #ffffff;
+    background: #0b0b0c;
     color-scheme: light;
     font-family: var(--font-sans);
   }
@@ -14,7 +14,7 @@
   body {
     margin: 0;
     min-width: 320px;
-    background: #ffffff;
+    background: #0b0b0c;
   }
 
   * {
