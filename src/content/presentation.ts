@@ -219,8 +219,8 @@ export const presentationSections: readonly PresentationSection[] = [
   {
     id: 'ingenieria',
     label: 'Departamento de ingeniería',
-    eyebrow: 'Ingeniería de maniobra',
-    title: 'Planificación técnica antes de cada movimiento.',
+    eyebrow: 'Planificación técnica',
+    title: 'Departamento de ingeniería antes de cada movimiento.',
     summary:
       'El departamento de ingeniería estudia los condicionantes de cada maniobra y prepara la documentación necesaria para su ejecución.',
     image: '/media/operacion-puerto-2020.avif',

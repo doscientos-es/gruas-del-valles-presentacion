@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react'
-import { useEffect, useState } from 'react'
+import mediumZoom from 'medium-zoom'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 
 import {
@@ -14,6 +15,36 @@ import { useReducedMotion } from '@/shared/hooks/useReducedMotion'
 type SlideProps = {
   section: NonNullable<ReturnType<typeof getSection>>
   index: number
+}
+
+type ZoomableImageProps = ComponentPropsWithoutRef<'img'> & {
+  onZoomChange?: (isZoomed: boolean) => void
+}
+
+function ZoomableImage({ className, onZoomChange, ...props }: ZoomableImageProps) {
+  const imageRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    const image = imageRef.current
+    if (!image) return
+
+    const zoom = mediumZoom(image, {
+      margin: 24,
+      background: 'rgb(11 11 12 / 0.94)',
+    })
+    const handleOpen = () => onZoomChange?.(true)
+    const handleClose = () => onZoomChange?.(false)
+
+    zoom.on('open', handleOpen).on('close', handleClose)
+
+    return () => {
+      zoom.off('open', handleOpen).off('close', handleClose).detach()
+    }
+  }, [onZoomChange])
+
+  return (
+    <img {...props} className={`cursor-zoom-in ${className ?? ''}`} data-zoomable ref={imageRef} />
+  )
 }
 
 const fleetHighlights = [
@@ -227,7 +258,7 @@ function SafetySlide({ section, index }: SlideProps) {
           </dl>
         </div>
         <div className="grid grid-cols-[1.35fr_0.65fr] gap-3" data-animate>
-          <img
+          <ZoomableImage
             alt="Operación industrial de Grúas del Vallès."
             className="h-[28rem] w-full object-cover sm:h-[38rem]"
             src="/media/operacion-industrial-ltm1350-2021.avif"
@@ -255,8 +286,23 @@ function FleetSlide({ section, index }: SlideProps) {
   return (
     <SlideFrame section={section}>
       <div className="mx-auto flex min-h-[100svh] max-w-[90rem] flex-col px-6 pt-28 pb-24 sm:px-10">
-        <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
-          <div>
+        <div
+          className="relative mt-2 min-h-[34rem] flex-1 overflow-hidden border-y border-white/20"
+          data-animate
+          data-fleet-flagship-image
+        >
+          <img
+            alt={section.imageAlt}
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            src={section.image}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-linear-to-b from-black/95 via-black/55 to-transparent"
+            data-fleet-flagship-contrast
+          />
+          <div className="absolute inset-0 bg-linear-to-r from-black/70 via-transparent to-transparent" />
+          <div className="relative z-10 max-w-4xl p-6 sm:p-10">
             <p
               className="text-xs font-bold tracking-[0.24em] text-[#ff7777] uppercase"
               data-animate
@@ -269,20 +315,12 @@ function FleetSlide({ section, index }: SlideProps) {
             >
               {section.title}
             </h1>
+            <p className="mt-5 max-w-xl text-sm leading-6 text-white/80 sm:text-base" data-animate>
+              {section.summary}
+            </p>
           </div>
-          <p className="max-w-xs text-sm leading-6 text-white/70" data-animate>
-            {section.summary}
-          </p>
-        </div>
-        <div className="relative mt-8 min-h-[26rem] flex-1 border-y border-white/20" data-animate>
-          <img
-            alt={section.imageAlt}
-            className="absolute inset-0 h-full w-full object-cover object-center"
-            src={section.image}
-          />
-          <div className="absolute inset-0 bg-linear-to-r from-black/70 via-transparent to-transparent" />
           <ol
-            className="absolute top-0 right-0 w-full max-w-[18rem] divide-y divide-white/20 border-b border-l border-white/20 bg-[#09090a]/80 backdrop-blur-sm"
+            className="absolute top-0 right-0 z-10 w-full max-w-[18rem] divide-y divide-white/20 border-b border-l border-white/20 bg-[#09090a]/80 backdrop-blur-sm"
             data-animate
           >
             {[
@@ -298,7 +336,7 @@ function FleetSlide({ section, index }: SlideProps) {
               </li>
             ))}
           </ol>
-          <p className="absolute bottom-5 left-0 text-[clamp(5rem,18vw,15rem)] leading-none font-semibold -tracking-widest text-white">
+          <p className="absolute bottom-5 left-0 z-10 text-[clamp(5rem,18vw,15rem)] leading-none font-semibold -tracking-widest text-white">
             700<span className="ml-3 text-[0.22em] tracking-normal">Tn</span>
           </p>
         </div>
@@ -348,10 +386,10 @@ function FleetOverviewSlide({ section, index }: SlideProps) {
         >
           {fleetHighlights.map((vehicle) => (
             <li
-              className="group relative min-h-44 overflow-hidden bg-[#111114] p-4 sm:p-5"
+              className="group relative min-h-52 overflow-hidden bg-white p-4 sm:min-h-56 sm:p-5"
               key={vehicle.model}
             >
-              <img
+              <ZoomableImage
                 alt={vehicle.model}
                 className="absolute inset-0 h-full w-full object-contain p-4 opacity-85 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
                 src={vehicle.image}
@@ -500,15 +538,16 @@ const teamManeuvers = [
 
 function TeamManeuverCarousel() {
   const [activeImage, setActiveImage] = useState(0)
+  const [isZoomed, setIsZoomed] = useState(false)
   const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
-    if (prefersReducedMotion) return
+    if (prefersReducedMotion || isZoomed) return
     const interval = window.setInterval(() => {
       setActiveImage((current) => (current + 1) % teamManeuvers.length)
     }, 6000)
     return () => window.clearInterval(interval)
-  }, [prefersReducedMotion])
+  }, [isZoomed, prefersReducedMotion])
 
   return (
     <div className="relative h-[22rem] overflow-hidden sm:h-[29rem]" data-animate>
@@ -532,11 +571,12 @@ function TeamManeuverCarousel() {
         </div>
       ) : null}
       {teamManeuvers.map((image, imageIndex) => (
-        <img
+        <ZoomableImage
           alt={imageIndex === activeImage ? image.alt : ''}
           aria-hidden={imageIndex === activeImage ? undefined : true}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] motion-reduce:transition-none ${imageIndex === activeImage ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] motion-reduce:transition-none ${imageIndex === activeImage ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
           key={image.src}
+          onZoomChange={setIsZoomed}
           src={image.src}
         />
       ))}
@@ -547,19 +587,21 @@ function TeamManeuverCarousel() {
 function TeamSlide({ section, index }: SlideProps) {
   return (
     <SlideFrame section={section}>
-      <div className="mx-auto grid min-h-[100svh] max-w-[90rem] items-center gap-10 px-6 pt-28 pb-24 sm:px-10 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="border-l-2 border-[#ed2828] pl-6" data-animate>
+      <div className="mx-auto grid min-h-[100svh] max-w-[90rem] items-center gap-8 px-6 pt-20 pb-16 sm:gap-10 sm:px-10 sm:pt-28 sm:pb-24 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="border-l-2 border-[#ed2828] pl-4 sm:pl-6" data-animate>
           <p className="text-xs font-bold tracking-[0.24em] text-[#ff7777] uppercase">
             0{index + 1} · {section.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-sm text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl">
+          <h1 className="mt-4 max-w-sm text-3xl font-semibold tracking-[-0.05em] text-white sm:mt-6 sm:text-4xl">
             {section.title}
           </h1>
-          <p className="mt-10 text-7xl font-semibold tracking-[-0.08em] text-white sm:text-9xl">
+          <p className="mt-6 text-7xl font-semibold tracking-[-0.08em] text-white sm:mt-10 sm:text-9xl">
             1968
           </p>
           <p className="mt-2 text-sm text-white/65">Inicio de actividad</p>
-          <p className="mt-16 max-w-sm text-base leading-7 text-white/75">{section.summary}</p>
+          <p className="mt-8 max-w-sm text-base leading-7 text-white/75 sm:mt-16">
+            {section.summary}
+          </p>
         </div>
         <div>
           <TeamManeuverCarousel />
@@ -591,15 +633,16 @@ const engineeringPlans = [
 
 function EngineeringPlanCarousel() {
   const [activeImage, setActiveImage] = useState(0)
+  const [isZoomed, setIsZoomed] = useState(false)
   const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
-    if (prefersReducedMotion) return
+    if (prefersReducedMotion || isZoomed) return
     const interval = window.setInterval(() => {
       setActiveImage((current) => (current + 1) % engineeringPlans.length)
     }, 6000)
     return () => window.clearInterval(interval)
-  }, [prefersReducedMotion])
+  }, [isZoomed, prefersReducedMotion])
 
   return (
     <div className="relative h-[22rem] overflow-hidden sm:h-[29rem]" data-animate>
@@ -623,11 +666,12 @@ function EngineeringPlanCarousel() {
         </div>
       ) : null}
       {engineeringPlans.map((image, imageIndex) => (
-        <img
+        <ZoomableImage
           alt={imageIndex === activeImage ? image.alt : ''}
           aria-hidden={imageIndex === activeImage ? undefined : true}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] motion-reduce:transition-none ${imageIndex === activeImage ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] motion-reduce:transition-none ${imageIndex === activeImage ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
           key={image.src}
+          onZoomChange={setIsZoomed}
           src={image.src}
         />
       ))}
@@ -711,7 +755,7 @@ function ProjectsSlide({ section, index }: SlideProps) {
                 className={`grid h-full grid-cols-1 gap-px bg-[#0b0b0c] ${images.length === 2 ? 'grid-rows-2' : ''}`}
               >
                 {images.map((src) => (
-                  <img
+                  <ZoomableImage
                     alt={images.length === 1 ? alt : ''}
                     className="h-full min-h-0 w-full object-cover"
                     key={src}
@@ -775,7 +819,7 @@ function ContactSlide({ section, index }: SlideProps) {
           </div>
         </div>
         <figure className="relative" data-animate>
-          <img
+          <ZoomableImage
             alt="Grúa de Grúas del Vallès durante una operación."
             className="h-[28rem] w-full object-cover"
             src="/media/operacion-construccion-2024.avif"

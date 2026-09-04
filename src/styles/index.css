@@ -1,7 +1,7 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Arial", "Helvetica Neue", sans-serif;
+  --font-sans: 'Arial', 'Helvetica Neue', sans-serif;
 }
 
 @layer base {
@@ -75,6 +75,15 @@
 
 .home-background-pan {
   animation: home-background-pan 7s ease-out forwards;
+}
+
+.medium-zoom-overlay {
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.medium-zoom-image--opened {
+  z-index: 101;
 }
 
 @media (prefers-reduced-motion: reduce) {

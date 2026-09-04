@@ -60,6 +60,18 @@ describe('presentation routes', () => {
     expect(screen.getByRole('heading', { name: /esta sección no existe/i })).toBeInTheDocument()
   })
 
+  it('makes the safety operation image zoomable', () => {
+    render(
+      <MemoryRouter initialEntries={['/seguridad']}>
+        <AppRoutes />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('img', { name: /operación industrial/i })).toHaveAttribute(
+      'data-zoomable',
+    )
+  })
+
   it('renders a direct route for the flagship fleet information', () => {
     render(
       <MemoryRouter initialEntries={['/flota']}>
@@ -68,6 +80,12 @@ describe('presentation routes', () => {
     )
 
     expect(screen.getByRole('heading', { name: /la mejor grúa de la flota/i })).toBeInTheDocument()
+    expect(
+      screen
+        .getByRole('heading', { name: /la mejor grúa de la flota/i })
+        .closest('[data-fleet-flagship-image]'),
+    ).not.toBeNull()
+    expect(document.querySelector('[data-fleet-flagship-contrast]')).not.toBeNull()
     expect(screen.getAllByText(/700 Tn/i)).not.toHaveLength(0)
     expect(
       screen.getByRole('navigation', { name: /progreso de presentación/i }),
@@ -91,6 +109,13 @@ describe('presentation routes', () => {
     expect(screen.getByText('Palfinger PK 165002L SH')).toBeInTheDocument()
     expect(screen.getByText('Liebherr LTM 1650-8.1')).toBeInTheDocument()
     expect(screen.getByRole('list', { name: /flota disponible/i })).toHaveClass('overflow-y-auto')
+    expect(screen.getByRole('img', { name: /liebherr ltm 1040-2.1/i }).parentElement).toHaveClass(
+      'min-h-52',
+      'bg-white',
+    )
+    expect(screen.getByRole('img', { name: /liebherr ltm 1040-2.1/i })).toHaveAttribute(
+      'data-zoomable',
+    )
   })
 
   it('shows the editable fleet-age statistics between fleet slides', () => {
@@ -120,6 +145,11 @@ describe('presentation routes', () => {
     )
 
     expect(document.querySelector('[data-team-maneuver-progress]')).not.toBeNull()
+    expect(
+      document.querySelector('img[src="/media/maniobras/20171124_100840.jpg"]'),
+    ).toHaveAttribute('data-zoomable')
+    expect(screen.getByText('1968')).toHaveClass('mt-6', 'sm:mt-10')
+    expect(screen.getByText(/más de 55 años de trayectoria/i)).toHaveClass('mt-8', 'sm:mt-16')
     expect(screen.getByText(/01\s*\/\s*08/)).toBeInTheDocument()
   })
 
@@ -136,6 +166,9 @@ describe('presentation routes', () => {
     expect(document.querySelector('img[src="/media/planos/1.png"]')).toHaveAttribute(
       'alt',
       'Plano de ingeniería 1 de Elian.',
+    )
+    expect(document.querySelector('img[src="/media/planos/1.png"]')).toHaveAttribute(
+      'data-zoomable',
     )
     expect(screen.getByText(/01\s*\/\s*06/)).toBeInTheDocument()
   })
@@ -160,6 +193,7 @@ describe('presentation routes', () => {
     )
     expect(document.querySelectorAll('img[src*="CapD\'Any"]')).toHaveLength(1)
     expect(document.querySelectorAll('img[src*="WA0008"]')).toHaveLength(1)
+    expect(document.querySelectorAll('[data-zoomable][src*="/media/maniobras/"]')).toHaveLength(4)
   })
 
   it('moves between chapters with the keyboard arrows', () => {
@@ -194,7 +228,7 @@ describe('presentation routes', () => {
     expect(screen.getByRole('heading', { name: /la mejor grúa de la flota/i })).toBeInTheDocument()
   })
 
-  it('returns to the index with Escape', () => {
+  it('does not navigate when Escape is pressed', () => {
     render(
       <MemoryRouter initialEntries={['/flota']}>
         <AppRoutes />
@@ -202,11 +236,7 @@ describe('presentation routes', () => {
     )
 
     fireEvent.keyDown(window, { key: 'Escape' })
-    expect(
-      screen.getByRole('heading', {
-        name: /capacidad y seguridad para operaciones críticas/i,
-      }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /la mejor grúa de la flota/i })).toBeInTheDocument()
   })
 
   it('combines the contact and closing messages without a further slide', () => {
@@ -224,6 +254,9 @@ describe('presentation routes', () => {
     expect(screen.getByRole('link', { name: /93 849 70 22/i })).toHaveAttribute(
       'href',
       'tel:+34938497022',
+    )
+    expect(screen.getByRole('img', { name: /durante una operación/i })).toHaveAttribute(
+      'data-zoomable',
     )
 
     fireEvent.keyDown(window, { key: 'ArrowRight' })

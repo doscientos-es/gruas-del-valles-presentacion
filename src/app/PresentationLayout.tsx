@@ -137,12 +137,6 @@ export function PresentationLayout() {
         return
       }
 
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        navigate('/')
-        return
-      }
-
       if (event.key === 'ArrowRight' && currentIndex >= 0) {
         event.preventDefault()
         if (nextSection) {
