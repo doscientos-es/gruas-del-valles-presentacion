@@ -6,7 +6,7 @@ Esta presentación reutiliza activos y datos que ya están en el repositorio de 
 
 - Logo: `gv-landing/src/public/logo.png`.
 - Portada: `assets/images/hero-grua-accion-2024-01.avif`.
-- Flota: `assets/images/flota-liebherr-ltm1500-8-1-01.avif`.
+- Flota: `assets/images/flota-liebherr-ltm1650-8-1-01.avif`.
 - Casos: imágenes de industria, construcción y eventos publicadas en `assets/images/`.
 
 Los seis archivos seleccionados están en `public/media/`. Se han copiado sin transformación y deben revisarse antes de distribuir la versión pública.
