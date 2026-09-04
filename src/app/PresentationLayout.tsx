@@ -1,68 +1,76 @@
-import { useGSAP } from '@gsap/react'
-import { gsap } from 'gsap'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { useEffect, useRef } from 'react'
-import { Link, Outlet, useLocation, useNavigate } from 'react-router'
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 
-import { presentationSections } from '@/content/presentation'
-import { useReducedMotion } from '@/shared/hooks/useReducedMotion'
+import { presentationSections } from "@/content/presentation";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
-gsap.registerPlugin(useGSAP)
+gsap.registerPlugin(useGSAP);
 
 function ClientBrand() {
   return (
     <span className="border-l border-white/30 pl-4 text-sm font-bold tracking-[0.2em] text-white">
       ELIAN
     </span>
-  )
+  );
 }
 
 export function PresentationLayout() {
-  const contentRef = useRef<HTMLElement>(null)
-  const location = useLocation()
-  const navigate = useNavigate()
-  const prefersReducedMotion = useReducedMotion()
+  const contentRef = useRef<HTMLElement>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
 
   useGSAP(
     () => {
       if (prefersReducedMotion) {
-        return
+        return;
       }
 
-      const routeContent = contentRef.current?.querySelector<HTMLElement>('[data-route-content]')
+      const routeContent = contentRef.current?.querySelector<HTMLElement>(
+        "[data-route-content]",
+      );
       const animatedElements = routeContent
-        ? Array.from(routeContent.querySelectorAll<HTMLElement>('[data-animate]'))
-        : []
+        ? Array.from(
+            routeContent.querySelectorAll<HTMLElement>("[data-animate]"),
+          )
+        : [];
       const backgrounds = routeContent
-        ? Array.from(routeContent.querySelectorAll<HTMLElement>('[data-route-background]'))
-        : []
+        ? Array.from(
+            routeContent.querySelectorAll<HTMLElement>(
+              "[data-route-background]",
+            ),
+          )
+        : [];
 
       if (routeContent) {
-        const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+        const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
 
         timeline
           .set(routeContent, { autoAlpha: 1 })
           .fromTo(
             routeContent,
-            { clipPath: 'inset(0 0 100% 0)' },
+            { clipPath: "inset(0 0 100% 0)" },
             {
-              clearProps: 'clipPath',
-              clipPath: 'inset(0 0 0% 0)',
+              clearProps: "clipPath",
+              clipPath: "inset(0 0 0% 0)",
               duration: 0.72,
             },
-            'reveal',
+            "reveal",
           )
           .fromTo(
             backgrounds,
             { scale: 1.1 },
             {
-              clearProps: 'transform',
+              clearProps: "transform",
               duration: 1.35,
-              ease: 'power2.out',
+              ease: "power2.out",
               scale: 1,
             },
-            'reveal',
-          )
+            "reveal",
+          );
 
         if (animatedElements.length) {
           timeline.fromTo(
@@ -70,14 +78,14 @@ export function PresentationLayout() {
             { autoAlpha: 0, y: 28 },
             {
               autoAlpha: 1,
-              clearProps: 'transform,opacity,visibility',
+              clearProps: "transform,opacity,visibility",
               duration: 0.66,
-              ease: 'power3.out',
+              ease: "power3.out",
               stagger: 0.1,
               y: 0,
             },
-            'reveal+=0.2',
-          )
+            "reveal+=0.2",
+          );
         }
       }
     },
@@ -86,57 +94,58 @@ export function PresentationLayout() {
       revertOnUpdate: true,
       scope: contentRef,
     },
-  )
+  );
 
   const currentIndex = presentationSections.findIndex(
     (section) => `/${section.id}` === location.pathname,
-  )
-  const currentSection = presentationSections[currentIndex]
-  const previousSection = presentationSections[currentIndex - 1]
-  const nextSection = presentationSections[currentIndex + 1]
-  const currentStepId = currentSection?.id
-  const currentStepNumber = currentIndex + 1
-  const progressSteps = presentationSections
-  const isIndex = location.pathname === '/'
+  );
+  const currentSection = presentationSections[currentIndex];
+  const previousSection = presentationSections[currentIndex - 1];
+  const nextSection = presentationSections[currentIndex + 1];
+  const currentStepId = currentSection?.id;
+  const currentStepNumber = currentIndex + 1;
+  const progressSteps = presentationSections;
+  const isIndex = location.pathname === "/";
 
   useEffect(() => {
     function handleKeyboardNavigation(event: KeyboardEvent) {
       if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-        return
+        return;
       }
 
-      const target = event.target
+      const target = event.target;
       if (
         target instanceof Element &&
         target.closest(
           "a, button, input, textarea, select, [contenteditable='true'], [role='textbox']",
         )
       ) {
-        return
+        return;
       }
 
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        navigate('/')
-        return
+      if (event.key === "Escape") {
+        event.preventDefault();
+        navigate("/");
+        return;
       }
 
-      if (event.key === 'ArrowRight' && currentIndex >= 0) {
-        event.preventDefault()
+      if (event.key === "ArrowRight" && currentIndex >= 0) {
+        event.preventDefault();
         if (nextSection) {
-          navigate(`/${nextSection.id}`)
+          navigate(`/${nextSection.id}`);
         }
       }
 
-      if (event.key === 'ArrowLeft' && currentIndex >= 0) {
-        event.preventDefault()
-        navigate(`/${previousSection?.id ?? ''}`)
+      if (event.key === "ArrowLeft" && currentIndex >= 0) {
+        event.preventDefault();
+        navigate(`/${previousSection?.id ?? ""}`);
       }
     }
 
-    window.addEventListener('keydown', handleKeyboardNavigation)
-    return () => window.removeEventListener('keydown', handleKeyboardNavigation)
-  }, [currentIndex, navigate, nextSection, previousSection])
+    window.addEventListener("keydown", handleKeyboardNavigation);
+    return () =>
+      window.removeEventListener("keydown", handleKeyboardNavigation);
+  }, [currentIndex, navigate, nextSection, previousSection]);
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#0b0b0c] text-white">
@@ -163,11 +172,11 @@ export function PresentationLayout() {
             {isIndex ? <ClientBrand /> : null}
             {currentStepId ? (
               <span className="text-white">
-                {String(currentStepNumber).padStart(2, '0')} /{' '}
-                {String(progressSteps.length).padStart(2, '0')}
+                {String(currentStepNumber).padStart(2, "0")} /{" "}
+                {String(progressSteps.length).padStart(2, "0")}
               </span>
             ) : null}
-            {location.pathname !== '/' ? (
+            {location.pathname !== "/" ? (
               <Link
                 className="inline-flex items-center gap-2 text-white/70 transition hover:text-white focus-visible:outline-none"
                 to="/"
@@ -182,7 +191,7 @@ export function PresentationLayout() {
       <main id="main-content" ref={contentRef} tabIndex={-1}>
         <Outlet />
       </main>
-      {currentStepId || location.pathname === '/' ? (
+      {currentStepId || location.pathname === "/" ? (
         <nav
           aria-label="Progreso de presentación"
           className="fixed inset-x-0 bottom-0 z-30 border-t border-white/15 bg-[#0b0b0c]/85 backdrop-blur-md"
@@ -211,18 +220,20 @@ export function PresentationLayout() {
               {progressSteps.map((section, index) => (
                 <li className="flex-1" key={section.id}>
                   <Link
-                    aria-current={section.id === currentStepId ? 'step' : undefined}
+                    aria-current={
+                      section.id === currentStepId ? "step" : undefined
+                    }
                     aria-label={`Ir al capítulo ${index + 1}: ${section.label}`}
                     className={`group relative block focus-visible:outline-none ${
-                      isIndex ? 'h-11' : 'h-6 py-2'
+                      isIndex ? "h-11" : "h-6 py-2"
                     }`}
                     to={`/${section.id}`}
                   >
                     <span
                       className={
                         isIndex
-                          ? 'pointer-events-none absolute inset-x-0 top-1 truncate px-1 text-center text-[0.58rem] font-bold tracking-[0.1em] text-white/85 uppercase'
-                          : 'pointer-events-none absolute bottom-[calc(100%+0.35rem)] left-1/2 -translate-x-1/2 border border-white/15 bg-[#09090a]/95 px-2 py-1 text-[0.6rem] font-bold tracking-[0.13em] whitespace-nowrap text-white uppercase opacity-0 shadow-lg transition group-hover:opacity-100 group-focus-visible:opacity-100'
+                          ? "pointer-events-none absolute inset-x-0 top-1 truncate px-1 text-center text-[0.58rem] font-bold tracking-[0.1em] text-white/85 uppercase"
+                          : "pointer-events-none absolute bottom-[calc(100%+0.35rem)] left-1/2 -translate-x-1/2 border border-white/15 bg-[#09090a]/95 px-2 py-1 text-[0.6rem] font-bold tracking-[0.13em] whitespace-nowrap text-white uppercase opacity-0 shadow-lg transition group-hover:opacity-100 group-focus-visible:opacity-100"
                       }
                     >
                       {section.label}
@@ -230,9 +241,9 @@ export function PresentationLayout() {
                     <span
                       className={`h-px transition duration-300 ${
                         section.id === currentStepId
-                          ? 'bg-[#ed2828]'
-                          : 'bg-white/25 group-hover:bg-white/80'
-                      } ${isIndex ? 'absolute right-1 bottom-2 left-1' : 'block'}`}
+                          ? "bg-[#ed2828]"
+                          : "bg-white/25 group-hover:bg-white/80"
+                      } ${isIndex ? "absolute right-1 bottom-2 left-1" : "block"}`}
                     />
                   </Link>
                 </li>
@@ -266,5 +277,5 @@ export function PresentationLayout() {
         </nav>
       ) : null}
     </div>
-  )
+  );
 }
