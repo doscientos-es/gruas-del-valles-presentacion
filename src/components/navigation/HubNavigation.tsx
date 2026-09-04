@@ -5,7 +5,7 @@ import { presentationSections } from "@/content/presentation";
 export function HubNavigation() {
   return (
     <nav aria-label="Áreas de la presentación">
-      <ul className="grid grid-cols-2 gap-x-4 sm:grid-cols-6 sm:gap-x-0">
+      <ul className="grid grid-cols-2 gap-x-4 sm:grid-cols-4 sm:gap-x-0 lg:grid-cols-8">
         {presentationSections.map((section, index) => {
           return (
             <li

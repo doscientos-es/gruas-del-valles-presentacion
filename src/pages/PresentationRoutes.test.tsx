@@ -31,7 +31,8 @@ describe("presentation routes", () => {
       screen.getByRole("navigation", { name: /progreso de presentación/i }),
     ).toBeInTheDocument();
     expect(screen.queryByRole("link", { current: "step" })).toBeNull();
-    expect(screen.getByText("Selección de flota")).toBeInTheDocument();
+    expect(screen.getByText("Estadísticas de flota")).toBeInTheDocument();
+    expect(screen.getByText("Departamento de ingeniería")).toBeInTheDocument();
     expect(
       screen
         .getAllByRole("link")
@@ -70,12 +71,12 @@ describe("presentation routes", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", {
-        name: /siguiente capítulo: selección de flota/i,
+        name: /siguiente capítulo: estadísticas de flota/i,
       }),
-    ).toHaveAttribute("href", "/flota-completa");
+    ).toHaveAttribute("href", "/estadisticas-flota");
   });
 
-  it("shows a representative grid of fleet vehicles", () => {
+  it("shows all fleet vehicles in a scrollable grid", () => {
     render(
       <MemoryRouter initialEntries={["/flota-completa"]}>
         <AppRoutes />
@@ -86,9 +87,26 @@ describe("presentation routes", () => {
       screen.getByRole("heading", { name: /medios para cada escala/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("img", { name: /spierings sk1265-at6/i }),
+      screen.getByRole("img", { name: /liebherr ltm 1040-2.1/i }),
     ).toBeInTheDocument();
     expect(screen.getByText("Palfinger PK200002L SH")).toBeInTheDocument();
+    expect(screen.getByText("Liebherr LTM 1600-8.1")).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: /flota disponible/i })).toHaveClass(
+      "overflow-y-auto",
+    );
+  });
+
+  it("shows the editable fleet-age statistics between fleet slides", () => {
+    render(
+      <MemoryRouter initialEntries={["/estadisticas-flota"]}>
+        <AppRoutes />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: /flota renovada/i }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/años de media/i)).toHaveLength(2);
   });
 
   it("integrates each operation description with its project image", () => {
@@ -117,21 +135,21 @@ describe("presentation routes", () => {
     fireEvent.keyDown(window, { key: "ArrowRight" });
     expect(
       screen.getByRole("heading", {
-        name: /medios para cada escala de operación/i,
+        name: /flota renovada para cada operación/i,
       }),
     ).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: "ArrowRight" });
     expect(
       screen.getByRole("heading", {
-        name: /experiencia técnica donde más importa/i,
+        name: /medios para cada escala de operación/i,
       }),
     ).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: "ArrowLeft" });
     expect(
       screen.getByRole("heading", {
-        name: /medios para cada escala de operación/i,
+        name: /flota renovada para cada operación/i,
       }),
     ).toBeInTheDocument();
 

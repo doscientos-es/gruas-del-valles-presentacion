@@ -1,8 +1,10 @@
 export type SectionId =
   | "seguridad"
   | "flota"
+  | "estadisticas-flota"
   | "flota-completa"
   | "equipo"
+  | "ingenieria"
   | "casos-de-exito"
   | "contacto";
 
@@ -19,6 +21,33 @@ export interface PresentationSection {
     description: string;
   }[];
 }
+
+// Datos provisionales: sustituir valores y etiquetas tras validar la antigüedad real.
+export const fleetAgeStatistics = [
+  {
+    title: "Antigüedad de toda la flota",
+    summary: "Distribución estimada del conjunto de vehículos propios.",
+    average: "8",
+    data: [
+      { label: "0–5 años", value: 31, color: "#ed2828" },
+      { label: "6–10 años", value: 38, color: "#ff7777" },
+      { label: "11–15 años", value: 19, color: "#b8b8bc" },
+      { label: "+15 años", value: 12, color: "#57575d" },
+    ],
+  },
+  {
+    title: "Antigüedad de la flota para este proyecto",
+    summary:
+      "Distribución estimada de los equipos propuestos para la operación.",
+    average: "5",
+    data: [
+      { label: "0–5 años", value: 62, color: "#ed2828" },
+      { label: "6–10 años", value: 25, color: "#ff7777" },
+      { label: "11–15 años", value: 13, color: "#b8b8bc" },
+      { label: "+15 años", value: 0, color: "#57575d" },
+    ],
+  },
+] as const;
 
 export const presentationSections: readonly PresentationSection[] = [
   {
@@ -53,7 +82,7 @@ export const presentationSections: readonly PresentationSection[] = [
     id: "flota",
     label: "Flota",
     eyebrow: "Buque insignia",
-    title: "Liebherr LTM 1500-8.1. La mejor grúa de la flota.",
+    title: "Liebherr LTM 1600-8.1. La mejor grúa de la flota.",
     summary:
       "Una grúa móvil de 700 Tn que representa la capacidad de una flota propia preparada para operaciones de gran tonelaje.",
     image: "/media/flota-liebherr-ltm1500-8-1-01.avif",
@@ -62,7 +91,7 @@ export const presentationSections: readonly PresentationSection[] = [
       {
         title: "700 Tn de capacidad máxima",
         description:
-          "La LTM 1500-8.1 es el mayor vehículo de la flota según la información corporativa y su buque insignia.",
+          "La LTM 1600-8.1 es el mayor vehículo de la flota según la información corporativa y su buque insignia.",
       },
       {
         title: "86 vehículos propios",
@@ -75,6 +104,17 @@ export const presentationSections: readonly PresentationSection[] = [
           "Dato comunicado en la cabecera de la landing corporativa; se acompañará de fichas técnicas autorizadas.",
       },
     ],
+  },
+  {
+    id: "estadisticas-flota",
+    label: "Estadísticas de flota",
+    eyebrow: "Datos de flota",
+    title: "Una flota renovada para cada operación.",
+    summary:
+      "Una lectura visual de la antigüedad estimada de toda la flota y de los equipos previstos para este proyecto.",
+    image: "/media/operacion-industrial-ltm1350-2021.avif",
+    imageAlt: "Maniobra industrial de Grúas del Vallès.",
+    details: [],
   },
   {
     id: "flota-completa",
@@ -113,6 +153,17 @@ export const presentationSections: readonly PresentationSection[] = [
           "La landing corporativa comunica servicio de emergencia 24 horas, 365 días al año.",
       },
     ],
+  },
+  {
+    id: "ingenieria",
+    label: "Departamento de ingeniería",
+    eyebrow: "Ingeniería de maniobra",
+    title: "Planificación técnica antes de cada movimiento.",
+    summary:
+      "El departamento de ingeniería estudia los condicionantes de cada maniobra y prepara la documentación necesaria para su ejecución.",
+    image: "/media/operacion-puerto-2020.avif",
+    imageAlt: "Operación industrial de Grúas del Vallès.",
+    details: [],
   },
   {
     id: "casos-de-exito",
