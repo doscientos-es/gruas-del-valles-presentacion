@@ -503,6 +503,10 @@ function FleetAgeDonut({ statistic }: { statistic: (typeof fleetAgeStatistics)[n
 
 const teamManeuvers = [
   {
+    src: '/media/dron/1.avif',
+    alt: 'Vista aérea de una maniobra de Grúas del Vallès.',
+  },
+  {
     src: '/media/maniobras/20171124_100840.jpg',
     alt: 'Maniobra de Grúas del Vallès, noviembre de 2017.',
   },

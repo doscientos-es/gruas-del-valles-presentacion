@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -13,6 +13,7 @@ vi.mock('@/shared/hooks/useReducedMotion', () => ({
 afterEach(() => {
   cleanup()
   reducedMotion.value = true
+  vi.useRealTimers()
 })
 
 describe('presentation routes', () => {
@@ -29,7 +30,7 @@ describe('presentation routes', () => {
       }),
     ).toBeInTheDocument()
     expect(screen.getAllByText(/700 Tn/i)).not.toHaveLength(0)
-    expect(document.querySelectorAll('[data-route-background]')).toHaveLength(4)
+    expect(document.querySelectorAll('[data-route-background]')).toHaveLength(5)
     expect(
       screen.getByRole('navigation', { name: /progreso de presentación/i }),
     ).toBeInTheDocument()
@@ -48,6 +49,33 @@ describe('presentation routes', () => {
       'href',
       '/seguridad',
     )
+  })
+
+  it('waits for the drone video to finish before advancing the cover', () => {
+    reducedMotion.value = false
+    vi.useFakeTimers()
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <AppRoutes />
+      </MemoryRouter>,
+    )
+
+    act(() => {
+      vi.advanceTimersByTime(28_000)
+    })
+
+    const video = document.querySelector('video[src="/media/dron/video.mov"]')
+    expect(video).toBeInTheDocument()
+    expect(screen.getByText(/05\s*\/\s*05/)).toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(21_000)
+    })
+    expect(video).toBeInTheDocument()
+
+    fireEvent.ended(video)
+    expect(screen.getByText(/01\s*\/\s*05/)).toBeInTheDocument()
   })
 
   it('does not expose certifications as a standalone route', () => {
@@ -145,12 +173,10 @@ describe('presentation routes', () => {
     )
 
     expect(document.querySelector('[data-team-maneuver-progress]')).not.toBeNull()
-    expect(
-      document.querySelector('img[src="/media/maniobras/20171124_100840.jpg"]'),
-    ).toHaveAttribute('data-zoomable')
+    expect(document.querySelector('img[src="/media/dron/1.avif"]')).toHaveAttribute('data-zoomable')
     expect(screen.getByText('1968')).toHaveClass('mt-6', 'sm:mt-10')
     expect(screen.getByText(/más de 55 años de trayectoria/i)).toHaveClass('mt-8', 'sm:mt-16')
-    expect(screen.getByText(/01\s*\/\s*08/)).toBeInTheDocument()
+    expect(screen.getByText(/01\s*\/\s*09/)).toBeInTheDocument()
   })
 
   it('shows the plan rotation progress in the engineering slide', () => {

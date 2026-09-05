@@ -3,18 +3,24 @@ import { useEffect, useState } from 'react'
 import { useReducedMotion } from '@/shared/hooks/useReducedMotion'
 
 const homeBackgrounds = [
-  '/media/flota-liebherr-ltm1650-8-1-01.avif',
-  '/media/hero-grua-accion-2024-01.avif',
-  '/media/operacion-industrial-ltm1350-2021.avif',
-  '/media/operacion-puerto-2020.avif',
+  { src: '/media/flota-liebherr-ltm1650-8-1-01.avif', type: 'image' },
+  { src: '/media/hero-grua-accion-2024-01.avif', type: 'image' },
+  { src: '/media/operacion-industrial-ltm1350-2021.avif', type: 'image' },
+  { src: '/media/operacion-puerto-2020.avif', type: 'image' },
+  {
+    poster: '/media/dron/1_1280x720.avif',
+    src: '/media/dron/video.mov',
+    type: 'video',
+  },
 ] as const
 
 export function HomePage() {
   const [activeBackground, setActiveBackground] = useState(0)
   const prefersReducedMotion = useReducedMotion()
+  const activeBackgroundItem = homeBackgrounds[activeBackground]
 
   useEffect(() => {
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || activeBackgroundItem.type === 'video') {
       return
     }
 
@@ -23,24 +29,38 @@ export function HomePage() {
     }, 7000)
 
     return () => window.clearInterval(interval)
-  }, [prefersReducedMotion])
+  }, [activeBackgroundItem.type, prefersReducedMotion])
 
   return (
     <section data-route-content>
       <div className="relative isolate min-h-[100svh] overflow-hidden bg-[#0b0b0c]">
-        {homeBackgrounds.map((src, index) => (
+        {homeBackgrounds.map((background, index) => (
           <div
             className={`absolute inset-0 -z-30 overflow-hidden transition-opacity duration-[1500ms] ease-out motion-reduce:transition-none ${index === activeBackground ? 'opacity-100' : 'opacity-0'}`}
             data-route-background
-            key={src}
+            key={background.src}
           >
-            <img
-              alt=""
-              aria-hidden="true"
-              className={`h-full w-full object-cover object-center ${index === activeBackground && !prefersReducedMotion ? 'home-background-pan' : ''}`}
-              fetchPriority={index === 0 ? 'high' : 'auto'}
-              src={src}
-            />
+            {background.type === 'image' ? (
+              <img
+                alt=""
+                aria-hidden="true"
+                className={`h-full w-full object-cover object-center ${index === activeBackground && !prefersReducedMotion ? 'home-background-pan' : ''}`}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                src={background.src}
+              />
+            ) : index === activeBackground ? (
+              <video
+                aria-hidden="true"
+                autoPlay
+                className="h-full w-full object-cover object-center"
+                muted
+                onEnded={() => setActiveBackground((current) => (current + 1) % homeBackgrounds.length)}
+                playsInline
+                poster={background.poster}
+                preload="metadata"
+                src={background.src}
+              />
+            ) : null}
           </div>
         ))}
         <div
