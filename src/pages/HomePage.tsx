@@ -8,8 +8,8 @@ const homeBackgrounds = [
   { src: '/media/operacion-industrial-ltm1350-2021.avif', type: 'image' },
   { src: '/media/operacion-puerto-2020.avif', type: 'image' },
   {
-    poster: '/media/dron/1_1280x720.avif',
-    src: '/media/dron/video.mov',
+    poster: '/media/dron/1.avif',
+    src: '/media/dron/video.mp4',
     type: 'video',
   },
 ] as const

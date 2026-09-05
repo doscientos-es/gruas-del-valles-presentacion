@@ -65,7 +65,7 @@ describe('presentation routes', () => {
       vi.advanceTimersByTime(28_000)
     })
 
-    const video = document.querySelector('video[src="/media/dron/video.mov"]')
+    const video = document.querySelector('video[src="/media/dron/video.mp4"]')
     expect(video).toBeInTheDocument()
     expect(screen.getByText(/05\s*\/\s*05/)).toBeInTheDocument()
 
